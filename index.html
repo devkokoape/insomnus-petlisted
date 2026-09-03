@@ -12,6 +12,9 @@
   <link rel="icon" type="image/png" href="assets/brand/logo.png">
   <link rel="apple-touch-icon" href="assets/brand/logo.png">
   <link rel="stylesheet" href="styles.css">
+  <link rel="preload" as="image" href="assets/pets/run-gloop.webp">
+  <link rel="preload" as="image" href="assets/pets/run-demon-dog.webp">
+  <link rel="preload" as="image" href="assets/pets/run-heal-bot.webp">
 </head>
 <body>
   <header class="tape-bar" id="header">
@@ -61,25 +64,29 @@
             </div>
           </div>
 
-          <div style="position:relative;">
-            <div class="mascot-frame dungeon-frame">
+          <div class="run-stage">
+            <div class="run-frame dungeon-frame" id="heroRun">
               <span class="corner tl" aria-hidden="true"></span>
               <span class="corner tr" aria-hidden="true"></span>
               <span class="corner bl" aria-hidden="true"></span>
               <span class="corner br" aria-hidden="true"></span>
-              <div class="mascot-image">
-                <img class="bg pixelated" src="assets/gifs/hero-monster.gif" alt="">
-                <div class="veil"></div>
-                <div class="mascot-pets">
-                  <img src="assets/pets/gloop.png" alt="Gloop">
-                  <img src="assets/pets/demon-dog.png" alt="Demon Dog">
-                  <img src="assets/pets/heal-bot.png" alt="Heal Bot">
+              <div class="run-kicker">IN EMBERS WAKE</div>
+              <div class="run-view">
+                <img id="heroRunImg" class="pixelated" src="assets/pets/run-gloop.webp" alt="Gloop following in a run">
+              </div>
+              <div class="run-hud">
+                <div>
+                  <div class="run-role" id="heroRunRole">PICKUP UTILITY</div>
+                  <div class="run-name" id="heroRunName">Gloop</div>
+                </div>
+                <div class="run-tabs" id="heroRunTabs" role="tablist">
+                  <button type="button" class="on" data-run="gloop">Gloop</button>
+                  <button type="button" data-run="demon">Demon Dog</button>
+                  <button type="button" data-run="heal">Heal Bot</button>
                 </div>
               </div>
-              <div class="mascot-caption">That's the kennel. Three jobs.</div>
             </div>
-            <div class="hand-note a" aria-hidden="true">gen 1 never burns</div>
-            <div class="hand-note b" aria-hidden="true">auto follow</div>
+            <div class="run-foot">pets follow · no extra buttons</div>
           </div>
         </div>
 
@@ -113,24 +120,24 @@
         <div>
           <div class="pet-deck" id="petDeck">
             <article class="dungeon-frame pet-card active" data-pet="gloop">
-              <div class="art"><img src="assets/pets/gloop.png" alt="Gloop"></div>
-              <div>
+              <div class="art"><img src="assets/pets/still-gloop.png" alt="Gloop in a run"></div>
+              <div class="meta">
                 <div class="role">PICKUP UTILITY</div>
                 <h3>Gloop</h3>
                 <p>Collects XP, health, and armor orbs so you can keep moving.</p>
               </div>
             </article>
             <article class="dungeon-frame pet-card" data-pet="demon">
-              <div class="art"><img src="assets/pets/demon-dog.png" alt="Demon Dog"></div>
-              <div>
+              <div class="art"><img src="assets/pets/still-demon-dog.png" alt="Demon Dog in a run"></div>
+              <div class="meta">
                 <div class="role">OFFENSIVE SUPPORT</div>
                 <h3>Demon Dog</h3>
                 <p>Attacks a random nearby enemy. Pressure without another button.</p>
               </div>
             </article>
             <article class="dungeon-frame pet-card" data-pet="heal">
-              <div class="art"><img src="assets/pets/heal-bot.png" alt="Heal Bot"></div>
-              <div>
+              <div class="art"><img src="assets/pets/still-heal-bot.png" alt="Heal Bot in a run"></div>
+              <div class="meta">
                 <div class="role">SUSTAIN SUPPORT</div>
                 <h3>Heal Bot</h3>
                 <p>Drops a delayed healing zone. Stay in the night longer.</p>

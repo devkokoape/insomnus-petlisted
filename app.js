@@ -91,16 +91,79 @@ writeFills();
 const headerLine = $('slipHeaderLine');
 if (headerLine) headerLine.addEventListener('click', writeFills);
 
-/* Pet deck */
+/* Hero in-run clips */
+const RUNS = {
+  gloop: { src: 'assets/pets/run-gloop.webp', name: 'Gloop', role: 'PICKUP UTILITY', alt: 'Gloop following in a run' },
+  demon: { src: 'assets/pets/run-demon-dog.webp', name: 'Demon Dog', role: 'OFFENSIVE SUPPORT', alt: 'Demon Dog in a run' },
+  heal: { src: 'assets/pets/run-heal-bot.webp', name: 'Heal Bot', role: 'SUSTAIN SUPPORT', alt: 'Heal Bot in a run' }
+};
+const RUN_ORDER = ['gloop', 'demon', 'heal'];
+Object.values(RUNS).forEach((r) => { const i = new Image(); i.src = r.src; });
+
+let runKey = 'gloop';
+let runTimer = null;
 const deck = $('petDeck');
+
+function showRun(key, hold) {
+  const run = RUNS[key];
+  if (!run) return;
+  runKey = key;
+  const img = $('heroRunImg');
+  if (img) {
+    img.src = run.src;
+    img.alt = run.alt;
+  }
+  const name = $('heroRunName');
+  const role = $('heroRunRole');
+  if (name) name.textContent = run.name;
+  if (role) role.textContent = run.role;
+  document.querySelectorAll('#heroRunTabs button').forEach((b) => {
+    b.classList.toggle('on', b.dataset.run === key);
+  });
+  if (deck) {
+    deck.querySelectorAll('.pet-card').forEach((c) => {
+      c.classList.toggle('active', c.dataset.pet === key);
+    });
+  }
+  if (hold) pauseRuns();
+}
+
+function tickRun() {
+  const i = (RUN_ORDER.indexOf(runKey) + 1) % RUN_ORDER.length;
+  showRun(RUN_ORDER[i]);
+}
+
+function pauseRuns() {
+  if (runTimer) { clearInterval(runTimer); runTimer = null; }
+}
+
+function startRuns() {
+  pauseRuns();
+  runTimer = setInterval(tickRun, 6500);
+}
+
+const runTabs = $('heroRunTabs');
+if (runTabs) {
+  runTabs.querySelectorAll('button').forEach((b) => {
+    b.addEventListener('click', () => showRun(b.dataset.run, true));
+  });
+}
+const heroRun = $('heroRun');
+if (heroRun) {
+  heroRun.addEventListener('mouseenter', pauseRuns);
+  heroRun.addEventListener('mouseleave', startRuns);
+}
+
+/* Pet deck */
 if (deck) {
   deck.querySelectorAll('.pet-card').forEach((card) => {
     card.addEventListener('click', () => {
-      deck.querySelectorAll('.pet-card').forEach((c) => c.classList.remove('active'));
-      card.classList.add('active');
+      showRun(card.dataset.pet, true);
+      card.scrollIntoView({ block: 'nearest' });
     });
   });
 }
+startRuns();
 
 /* Checkboxes */
 function bindCheck(id) {
