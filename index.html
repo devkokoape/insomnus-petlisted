@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>INSOMNUS · Petlisted Application</title>
+  <meta name="description" content="Petlisted application for Insomnus Gen 1 pets. Three free claims, fifty guaranteed, one hundred petlisted spots. Fill the slip. One wallet, one slot.">
+  <meta property="og:title" content="INSOMNUS · Petlisted Application">
+  <meta property="og:description" content="You don't have to last the night alone. Apply for the Insomnus Gen 1 petlist.">
+  <meta property="og:image" content="assets/brand/logo.png">
+  <meta name="theme-color" content="#0c0a08">
+  <link rel="icon" type="image/png" href="assets/brand/logo.png">
+  <link rel="apple-touch-icon" href="assets/brand/logo.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="tape-bar" id="header">
+    <div class="wrap tape-inner">
+      <a href="#" class="logo-link" id="navLogo">
+        <img src="assets/brand/logo.png" alt="Insomnus">
+        <span>INSOMNUS</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#what" class="nav-item">What is this</a>
+        <a href="#map" class="nav-item">Roadmap</a>
+        <a href="#faq" class="nav-item">Questions</a>
+        <a href="#slip" class="btn-primary nav-cta">Get on the list</a>
+      </nav>
+      <button type="button" class="menu-btn" id="menuBtn" aria-label="Menu">MENU</button>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#what">What is this</a>
+      <a href="#map">Roadmap</a>
+      <a href="#faq">Questions</a>
+      <a href="#slip" class="btn-primary">Get on the list</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero-sheet">
+      <div class="wrap">
+        <div class="hero-grid">
+          <div>
+            <div class="hero-tag">
+              petlist is open
+              <span class="dot">·</span>
+              <span id="windowTag">72h</span>
+            </div>
+            <h1 class="hero-title">
+              You don't have to<br>
+              last the <span class="gold">night</span><br>
+              <span class="red">alone.</span>
+            </h1>
+            <p class="hero-desc">
+              Insomnus is a free-to-play horde-survival roguelike. Gen 1 pets follow you in Embers Wake — Gloop, Demon Dog, Heal Bot. Being added to the petlist gives you a chance to mint before public. Three free claims. Fifty guaranteed. One hundred petlisted spots.
+            </p>
+            <div class="hero-actions">
+              <a href="#slip" class="btn-primary">Enter the list</a>
+              <a href="#what" class="btn-ghost">Meet the pets</a>
+              <div class="doodle-arrow" aria-hidden="true">here ↓</div>
+            </div>
+          </div>
+
+          <div style="position:relative;">
+            <div class="mascot-frame dungeon-frame">
+              <span class="corner tl" aria-hidden="true"></span>
+              <span class="corner tr" aria-hidden="true"></span>
+              <span class="corner bl" aria-hidden="true"></span>
+              <span class="corner br" aria-hidden="true"></span>
+              <div class="mascot-image">
+                <img class="bg pixelated" src="assets/gifs/hero-monster.gif" alt="">
+                <div class="veil"></div>
+                <div class="mascot-pets">
+                  <img src="assets/pets/gloop.png" alt="Gloop">
+                  <img src="assets/pets/demon-dog.png" alt="Demon Dog">
+                  <img src="assets/pets/heal-bot.png" alt="Heal Bot">
+                </div>
+              </div>
+              <div class="mascot-caption">That's the kennel. Three jobs.</div>
+            </div>
+            <div class="hand-note a" aria-hidden="true">gen 1 never burns</div>
+            <div class="hand-note b" aria-hidden="true">auto follow</div>
+          </div>
+        </div>
+
+        <div class="trust-strip">
+          <span class="trust-label">built for the sleepless:</span>
+          <span class="trust-badge green">Robinhood</span>
+          <span class="trust-badge gold">Gen 1 never burns</span>
+          <span class="trust-badge red">one wallet · one slot</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="what" class="manifesto-sheet">
+      <div class="wrap manifesto-grid">
+        <div>
+          <div class="kicker">THE KENNEL</div>
+          <h2 class="manifesto-title">What is this, <span class="red">really</span></h2>
+          <p class="manifesto-p">
+            Each Gen 1 pet is a companion that follows you automatically.
+            <span class="highlight">No extra buttons. No targeting. Three roles that change how a run lasts.</span>
+          </p>
+          <p class="manifesto-p">
+            The petlist is the only way in before public. Applying is free. One wallet — one spot. If the window closes before you seal the slip you wait for public or you buy it later. Be quick.
+          </p>
+          <div class="circled-note">
+            <span>Applying is free — fill the three lines.</span>
+            <span class="bang">important.</span>
+          </div>
+        </div>
+
+        <div>
+          <div class="pet-deck" id="petDeck">
+            <article class="dungeon-frame pet-card active" data-pet="gloop">
+              <div class="art"><img src="assets/pets/gloop.png" alt="Gloop"></div>
+              <div>
+                <div class="role">PICKUP UTILITY</div>
+                <h3>Gloop</h3>
+                <p>Collects XP, health, and armor orbs so you can keep moving.</p>
+              </div>
+            </article>
+            <article class="dungeon-frame pet-card" data-pet="demon">
+              <div class="art"><img src="assets/pets/demon-dog.png" alt="Demon Dog"></div>
+              <div>
+                <div class="role">OFFENSIVE SUPPORT</div>
+                <h3>Demon Dog</h3>
+                <p>Attacks a random nearby enemy. Pressure without another button.</p>
+              </div>
+            </article>
+            <article class="dungeon-frame pet-card" data-pet="heal">
+              <div class="art"><img src="assets/pets/heal-bot.png" alt="Heal Bot"></div>
+              <div>
+                <div class="role">SUSTAIN SUPPORT</div>
+                <h3>Heal Bot</h3>
+                <p>Drops a delayed healing zone. Stay in the night longer.</p>
+              </div>
+            </article>
+          </div>
+          <div class="deck-hint">click a pet to inspect ↷</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="slip" class="form-wrapper">
+      <div class="wrap">
+        <div class="spots-row">
+          <div class="dungeon-frame spot">
+            <div class="amt">3×</div>
+            <div class="kind">FREE CLAIM</div>
+            <div class="n">spots</div>
+          </div>
+          <div class="dungeon-frame spot">
+            <div class="amt">50×</div>
+            <div class="kind">GTD PET</div>
+            <div class="n">guaranteed</div>
+          </div>
+          <div class="dungeon-frame spot">
+            <div class="amt">100×</div>
+            <div class="kind">PETLISTED</div>
+            <div class="n">application</div>
+          </div>
+        </div>
+
+        <div class="slip-paper dungeon-frame" id="slipPaper">
+          <div id="slipFormView">
+            <div class="slip-header-line" id="slipHeaderLine" title="Click to replay">
+              <div class="header-field">
+                <span class="prompt">Applicant:</span>
+                <span class="fill" id="fillName">&nbsp;</span>
+              </div>
+              <div class="header-field">
+                <span class="prompt">Rank:</span>
+                <span class="fill" id="fillRank">&nbsp;</span>
+              </div>
+              <div class="header-field">
+                <span class="prompt">Cycle:</span>
+                <span class="fill" id="fillDate">&nbsp;</span>
+              </div>
+            </div>
+
+            <h2 class="slip-title">Petlisted application</h2>
+            <p class="slip-intro">Fill it in, seal it, get in. Simple.</p>
+
+            <div class="field-grid">
+              <div class="field-group">
+                <label for="f-x" class="field-label">X handle</label>
+                <div id="wrap-x" class="input-with-prefix">
+                  <span class="prefix">@</span>
+                  <input id="f-x" type="text" spellcheck="false" autocomplete="off" placeholder="yourname" maxlength="15">
+                </div>
+                <div id="err-x" class="err">Enter your REAL X handle.</div>
+              </div>
+
+              <div class="field-group">
+                <div class="field-label">
+                  <label for="f-quote">Quote / Reply link</label>
+                  <a class="btn-pinned" href="https://x.com/insomnusxyz/status/2094810680948097106" target="_blank" rel="noopener">Pinned post ↗</a>
+                </div>
+                <div id="wrap-quote" class="input-line">
+                  <input id="f-quote" type="url" spellcheck="false" autocomplete="off" placeholder="https://x.com/yourname/status/…">
+                </div>
+                <div id="err-quote" class="err">Paste the link to your quote or reply on X.</div>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label for="f-wallet" class="field-label">Wallet address</label>
+              <div id="wrap-wallet" class="input-line">
+                <input id="f-wallet" class="mono" type="text" spellcheck="false" autocomplete="off" placeholder="0x… or paste it here">
+              </div>
+              <div id="err-wallet" class="err">
+                We need a wallet address to hold your spot.
+                <span class="note">check this one again</span>
+              </div>
+              <div class="one-slot">one person, one slot. we check.</div>
+            </div>
+
+            <div class="checks">
+              <div id="agreeCheckbox1" class="check" role="checkbox" aria-checked="false" tabindex="0">
+                <div class="box"><div id="agreeTick1" class="tick"></div></div>
+                <div class="txt">I followed <strong>@insomnusxyz</strong> on X.</div>
+              </div>
+              <div id="agreeCheckbox2" class="check" role="checkbox" aria-checked="false" tabindex="0">
+                <div class="box"><div id="agreeTick2" class="tick"></div></div>
+                <div class="txt">I RT and Liked the <strong>pinned post</strong>.</div>
+              </div>
+            </div>
+            <div id="err-agree" class="err">Tick both boxes so we can check you off.</div>
+
+            <div class="submit-row">
+              <button type="button" id="btnSubmitSlip" class="btn-primary">Seal it</button>
+              <span id="disabledNote" class="disabled-note">all three lines and the ticks, then seal it</span>
+            </div>
+          </div>
+
+          <div id="slipSuccessView" class="state-panel">
+            <div class="stamp">SEALED — you're on the list</div>
+            <div class="queue" id="queueNumber">Application received</div>
+            <p>If you want, tell people on X that you applied for the @insomnusxyz petlist.</p>
+            <a id="btnShareX" class="btn-primary" target="_blank" rel="noopener" href="https://x.com/intent/post?text=I%20just%20applied%20for%20the%20%40insomnusxyz%20petlist.">Show it on X</a>
+          </div>
+
+          <div id="slipFullView" class="state-panel">
+            <div class="stamp">the kennel is full</div>
+            <p>The list is currently full. The waiting list is real: we call names in order when spots free up at the end of the window.</p>
+            <button type="button" class="btn-primary" data-reset>Put me on the waiting list</button>
+          </div>
+
+          <div id="slipAlreadyView" class="state-panel">
+            <div class="stamp gold">seen</div>
+            <p>This wallet already sealed a slip — nothing else to do.</p>
+            <div class="meta-line" id="alreadyMeta">0x… · @handle</div>
+            <button type="button" class="btn-ghost" data-reset>use a different wallet</button>
+          </div>
+
+          <div id="slipNetworkView" class="state-panel">
+            <div class="stamp">gloop ate it</div>
+            <p>Your slip didn't reach us. Nothing was saved and nothing was charged.</p>
+            <button type="button" class="btn-primary" data-reset>Seal it again</button>
+          </div>
+        </div>
+        <div class="slip-foot">↑ 1 person, 1 slot</div>
+      </div>
+    </section>
+
+    <section id="map" class="roadmap-sheet">
+      <div class="wrap">
+        <h2 class="roadmap-title">The map</h2>
+        <div class="roadmap-sub">four stops. no moon. no chest of promises.</div>
+        <div class="roadmap-grid">
+          <div class="stop">
+            <div class="stop-circle">1</div>
+            <div class="stop-title">The door</div>
+            <p>Game live. Pets designed. The sleepless already play Embers Wake.</p>
+          </div>
+          <div class="stop">
+            <div class="stop-circle">2</div>
+            <div class="stop-title">The list</div>
+            <p>Free claim, GTD, and petlisted spots open on X. 72 hours.</p>
+          </div>
+          <div class="stop current">
+            <div class="stop-circle">3</div>
+            <div class="stop-title">The wait</div>
+            <p>The application is live. Seal your slip before the window shuts.</p>
+            <div class="you-are-here">you are here</div>
+          </div>
+          <div class="stop future">
+            <div class="stop-circle">X</div>
+            <div class="stop-title">The mint</div>
+            <p>Gen 1 on Robinhood. Breed after. Gen 1 never burns.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="faq-section">
+      <div class="wrap">
+        <h2 class="faq-title">Notes from the night</h2>
+        <div class="faq-list">
+          <details class="dungeon-frame faq-item">
+            <summary>What is the petlist? <span class="plus">+</span></summary>
+            <div class="faq-body">A list of wallets that stand a chance to mint a Gen 1 pet before public. Applying costs nothing. It does not guarantee that you will get a pet.</div>
+          </details>
+          <details class="dungeon-frame faq-item">
+            <summary>When is the mint? <span class="plus">+</span></summary>
+            <div class="faq-body">When the date is announced you will hear it on @insomnusxyz. This page is the application, not the mint.</div>
+          </details>
+          <details class="dungeon-frame faq-item">
+            <summary>What does it cost? <span class="plus">+</span></summary>
+            <div class="faq-body">Applying is free. Mint price is announced with the mint. One pet per wallet on the list. Gas is on you.</div>
+          </details>
+          <details class="dungeon-frame faq-item">
+            <summary>Do I need to hold anything? <span class="plus">+</span></summary>
+            <div class="faq-body">No. No token, no NFT, no anything. Just the three lines on the slip, a follow, and a quote or reply on the pinned post.</div>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <img class="bg pixelated" src="assets/footer/footer-bg.gif" alt="">
+    <div class="veil"></div>
+    <div class="wrap footer-inner">
+      <div class="footer-card dungeon-frame">
+        <div class="footer-grid">
+          <div class="brand-blurb">
+            <div class="row">
+              <img src="assets/brand/logo.png" alt="Insomnus">
+              <span class="nm">INSOMNUS</span>
+            </div>
+            <p>In the realm of eternal night, only the sleepless survive.</p>
+          </div>
+          <div class="footer-links">
+            <div>
+              <div class="col-k">THE REALM</div>
+              <a href="https://insomnus.xyz" target="_blank" rel="noopener">Enter dungeon</a>
+              <a href="https://docs.insomnus.xyz" target="_blank" rel="noopener">Docs &amp; lore</a>
+              <a href="https://docs.insomnus.xyz/companions-and-enemies/pets" target="_blank" rel="noopener">Pet details</a>
+            </div>
+            <div>
+              <div class="col-k">THE SLEEPLESS</div>
+              <a href="https://x.com/insomnusxyz" target="_blank" rel="noopener">X / Twitter</a>
+              <a href="https://discord.gg/BCThPrJUtN" target="_blank" rel="noopener">Discord</a>
+              <a href="https://insomnus.xyz/login" target="_blank" rel="noopener">Play beta</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="copy">© 2026 INSOMNUS. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
