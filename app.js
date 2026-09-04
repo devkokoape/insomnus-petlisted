@@ -667,7 +667,7 @@ function sharePostFor(handle) {
   return {
     link: link,
     text: text,
-    href: 'https://x.com/intent/post?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(link)
+    href: 'https://x.com/intent/post?text=' + encodeURIComponent(text)
   };
 }
 
