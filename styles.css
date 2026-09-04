@@ -967,6 +967,11 @@ section[id] { scroll-margin-top: calc(var(--header) + 18px); }
   max-width: 32em;
   margin: 0 auto 22px;
 }
+.state-panel .btn-primary,
+.state-panel .btn-ghost {
+  width: 100%;
+  margin-top: 8px;
+}
 .meta-line {
   font-family: ui-monospace, 'VT323', monospace;
   color: var(--dim);
