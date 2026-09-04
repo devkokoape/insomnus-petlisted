@@ -23,6 +23,13 @@
   <meta name="theme-color" content="#0c0a08">
   <link rel="icon" type="image/png" href="assets/brand/logo.png">
   <link rel="apple-touch-icon" href="assets/brand/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://murnfprvourhkmieuref.supabase.co" crossorigin>
+  <link rel="preload" href="assets/fonts/alagard.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="assets/gifs/DsGOb8.gif" as="image">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&family=Inter:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -59,7 +66,7 @@
 
   <main>
     <section class="hero-sheet" id="slip">
-      <img class="hero-bg pixelated" src="assets/gifs/DsGOb8.gif" alt="">
+      <img class="hero-bg pixelated" src="assets/gifs/DsGOb8.gif" alt="" fetchpriority="high" decoding="async">
       <div class="hero-green"></div>
       <div class="hero-veil"></div>
       <div class="wrap">
@@ -332,7 +339,7 @@
   </main>
 
   <footer class="site-footer">
-    <img class="bg pixelated" src="assets/footer/footer-bg.gif" alt="">
+    <img class="bg pixelated" src="assets/footer/footer-bg.gif" alt="" loading="lazy" decoding="async" fetchpriority="low">
     <div class="green"></div>
     <div class="veil"></div>
     <div class="wrap footer-inner">
@@ -371,7 +378,7 @@
   </footer>
 
   <canvas id="confetti" aria-hidden="true"></canvas>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="app.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="app.js"></script>
 </body>
 </html>

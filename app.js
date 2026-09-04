@@ -1308,10 +1308,19 @@ async function onTaskTap(id) {
   }
 }
 
+function scheduleIdle(fn) {
+  if (typeof requestIdleCallback === 'function') {
+    requestIdleCallback(fn, { timeout: 900 });
+    return;
+  }
+  requestAnimationFrame(function () { setTimeout(fn, 0); });
+}
+
 renderTaskList();
 if (loadSession() && loadSession().id) flushPendingTasks();
 
-loadBoard();
+setBoard(EXAMPLE_BOARD);
+scheduleIdle(loadBoard);
 
 (async function bootX() {
   const q = new URLSearchParams(location.search);
