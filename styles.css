@@ -981,14 +981,6 @@ section[id] { scroll-margin-top: calc(var(--header) + 18px); }
   transform: rotate(-5deg);
   margin-bottom: 18px;
 }
-.stamp.burst {
-  animation: stampBurst 0.7s ease-out;
-}
-@keyframes stampBurst {
-  0% { transform: rotate(-5deg) scale(0.72); filter: brightness(1.8); }
-  55% { transform: rotate(-3deg) scale(1.08); filter: brightness(1.25); }
-  100% { transform: rotate(-5deg) scale(1); filter: none; }
-}
 .stamp.gold {
   border-color: var(--gold);
   color: var(--gold);

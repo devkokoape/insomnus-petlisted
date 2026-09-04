@@ -698,12 +698,6 @@ function paintSuccess(n, handle) {
   fillRefLink('refLink', handle);
   refreshShares(handle);
   showView('slipSuccessView');
-  const stamp = document.querySelector('#slipSuccessView .stamp');
-  if (stamp) {
-    stamp.classList.remove('burst');
-    void stamp.offsetWidth;
-    stamp.classList.add('burst');
-  }
   fireConfetti();
 }
 
