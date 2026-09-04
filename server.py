@@ -210,9 +210,12 @@ def apply(body):
     if ref == handle:
         ref = ""
 
-    code, existing = sb_request("GET", "/rest/v1/applications", "address=eq.%s&select=id,handle" % urllib.parse.quote(addr))
+    code, existing = sb_request("GET", "/rest/v1/applications", "xid=eq.%s&select=id,handle" % urllib.parse.quote(xid))
     if code == 404:
         return 400, {"ok": False, "error": "supabase tables missing — run schema.sql in the SQL editor"}
+    if code < 400 and isinstance(existing, list) and existing:
+        return 200, {"ok": False, "error": "seen"}
+    code, existing = sb_request("GET", "/rest/v1/applications", "address=eq.%s&select=id,handle" % urllib.parse.quote(addr))
     if code < 400 and isinstance(existing, list) and existing:
         return 200, {"ok": False, "error": "seen"}
 

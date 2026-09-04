@@ -599,6 +599,8 @@ async function sendApply(addr, handle, post, ref, xid) {
       pfp: (loadSession() && loadSession().pfp) || '',
       last_login: new Date().toISOString()
     });
+    const seenX = await sbRest('GET', '/applications', 'xid=eq.' + encodeURIComponent(xid) + '&select=id,handle,address');
+    if (seenX.ok && Array.isArray(seenX.data) && seenX.data.length) return 'seen';
     const seen = await sbRest('GET', '/applications', 'address=eq.' + encodeURIComponent(addr.toLowerCase()) + '&select=id,handle');
     if (seen.ok && Array.isArray(seen.data) && seen.data.length) return 'seen';
     const ins = await sbRest('POST', '/applications', '', {
@@ -755,6 +757,22 @@ if ($('btnCopyAlreadyRef')) {
   $('btnCopyAlreadyRef').addEventListener('click', () => copyText($('alreadyRefLink') && $('alreadyRefLink').value, $('btnCopyAlreadyRef')));
 }
 
+function lockSealed(addr, handle) {
+  if ($('f-wallet') && addr) $('f-wallet').value = addr;
+  if ($('f-x') && handle) $('f-x').value = handle;
+  paintAlready(addr, handle);
+  refreshShares(handle);
+}
+
+async function fetchMyApplication(xid) {
+  if (!xid) return null;
+  try {
+    const res = await sbRest('GET', '/applications', 'xid=eq.' + encodeURIComponent(xid) + '&select=address,handle,post,ref&limit=1');
+    if (res.ok && Array.isArray(res.data) && res.data.length) return res.data[0];
+  } catch (e) {}
+  return null;
+}
+
 /* Prefill referral from ?ref=xusername and restore prior apply */
 (function restore() {
   const incoming = loadRef();
@@ -770,11 +788,10 @@ if ($('btnCopyAlreadyRef')) {
 
   const saved = loadSaved();
   if (saved && saved.address) {
-    const wallet = $('f-wallet');
-    if (wallet && !wallet.value) wallet.value = saved.address;
-    if ($('f-x') && saved.handle && !$('f-x').value) $('f-x').value = saved.handle;
+    lockSealed(saved.address, saved.handle || '');
+  } else {
+    refreshShares(saved && saved.handle);
   }
-  refreshShares(saved && saved.handle);
 })();
 
 const SCORE = { follow: 100, like: 5, retweet: 10, quote: 15, seal: 50, ref: 80 };
@@ -1202,6 +1219,19 @@ loadBoard();
   }
   const ok = await hydrateSupabaseSession();
   if (ok) {
+    const sess = loadSession();
+    const mine = await fetchMyApplication(sess && sess.id);
+    if (mine) {
+      saveLocal({
+        address: String(mine.address || '').toLowerCase(),
+        handle: mine.handle || '',
+        xid: sess.id,
+        post: mine.post || '',
+        ref: mine.ref || '',
+        at: Date.now()
+      });
+      lockSealed(mine.address, mine.handle);
+    }
     if (typeof flushPendingTasks === 'function') flushPendingTasks();
     if (typeof loadBoard === 'function') loadBoard();
   }

@@ -22,6 +22,7 @@ create table if not exists public.applications (
 
 create index if not exists applications_handle_idx on public.applications (handle);
 create index if not exists applications_ref_idx on public.applications (ref);
+create unique index if not exists applications_xid_uidx on public.applications (xid);
 
 create table if not exists public.task_claims (
   xid text not null references public.users (xid) on update cascade,
