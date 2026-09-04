@@ -110,7 +110,10 @@
 
                 <div class="field-stack">
                   <div class="field-group">
-                    <label for="f-x" class="field-label">X handle</label>
+                    <div class="field-label">
+                      <label for="f-x">X handle</label>
+                      <a class="btn-pinned" href="https://x.com/intent/follow?screen_name=insomnusxyz" target="_blank" rel="noopener">Follow ↗</a>
+                    </div>
                     <div id="wrap-x" class="input-box">
                       <span class="prefix">@</span>
                       <input id="f-x" type="text" spellcheck="false" autocomplete="off" placeholder="yourname" maxlength="15">
@@ -121,7 +124,10 @@
                   <div class="field-group">
                     <div class="field-label">
                       <label for="f-quote">Quote / Reply link</label>
-                      <a class="btn-pinned" href="https://x.com/insomnusxyz/status/2094810680948097106" target="_blank" rel="noopener">Pinned post ↗</a>
+                      <span class="field-jumps">
+                        <a class="btn-pinned" href="https://x.com/insomnusxyz/status/2094810680948097106" target="_blank" rel="noopener">Pinned post ↗</a>
+                        <a class="btn-pinned" href="https://x.com/intent/post?url=https%3A%2F%2Fx.com%2Finsomnusxyz%2Fstatus%2F2094810680948097106" target="_blank" rel="noopener">Quote ↗</a>
+                      </span>
                     </div>
                     <div id="wrap-quote" class="input-box">
                       <input id="f-quote" type="url" spellcheck="false" autocomplete="off" placeholder="https://x.com/yourname/status/…">
@@ -155,10 +161,12 @@
                   <div id="agreeCheckbox1" class="check" role="checkbox" aria-checked="false" tabindex="0">
                     <div class="box"><div id="agreeTick1" class="tick"></div></div>
                     <div class="txt">I followed <strong>@insomnusxyz</strong> on X.</div>
+                    <a class="btn-pinned" href="https://x.com/intent/follow?screen_name=insomnusxyz" target="_blank" rel="noopener">Follow ↗</a>
                   </div>
                   <div id="agreeCheckbox2" class="check" role="checkbox" aria-checked="false" tabindex="0">
                     <div class="box"><div id="agreeTick2" class="tick"></div></div>
                     <div class="txt">I RT and Liked the <strong>pinned post</strong>.</div>
+                    <a class="btn-pinned" href="https://x.com/intent/post?url=https%3A%2F%2Fx.com%2Finsomnusxyz%2Fstatus%2F2094810680948097106" target="_blank" rel="noopener">Quote ↗</a>
                   </div>
                 </div>
                 <div id="err-agree" class="err">Tick both boxes so we can check you off.</div>

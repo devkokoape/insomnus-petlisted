@@ -473,7 +473,10 @@ function bindCheck(id) {
     const err = $('err-agree');
     if (err) err.classList.remove('on');
   };
-  el.addEventListener('click', toggle);
+  el.addEventListener('click', (e) => {
+    if (e.target.closest('a')) return;
+    toggle();
+  });
   el.addEventListener('keydown', (e) => {
     if (e.key === ' ' || e.key === 'Enter') {
       e.preventDefault();
