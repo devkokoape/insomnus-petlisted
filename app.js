@@ -1,7 +1,7 @@
 /* Insomnus petlisted application
  * Paste your Apps Script web app URL after deploying tools/petlist-apply.gs */
 const APPLY_SCRIPT = 'https://script.google.com/macros/s/AKfycbz9ZOXVQFkEOAVIAxgDfO1ok3QCjIeWHtAuVIStLUquYoGccst_Zs9XZirk6IUZAgNB/exec';
-const PINNED = 'https://x.com/insomnusxyz/status/2094810680948097106';
+const PINNED = 'https://x.com/insomnusxyz/status/2095882002646135247';
 const X_ACCOUNT = 'insomnusxyz';
 const X_KOKO = 'KokoApe_';
 const DISCORD_URL = 'https://discord.gg/BCThPrJUtN';
