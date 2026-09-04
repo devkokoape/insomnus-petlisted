@@ -65,10 +65,7 @@ a, button, input, label, summary, [role="checkbox"], .cursor-pointer {
   cursor: url('assets/cursors/cursor-click.png') 16 16, pointer;
 }
 
-h1, h2, h3, p, span, a, button, label, li, summary {
-  user-select: none;
-}
-
+button, [role="checkbox"] { user-select: none; }
 input, textarea { user-select: text; }
 
 button, input { font: inherit; color: inherit; }
