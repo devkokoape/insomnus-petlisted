@@ -4,3 +4,5 @@ desktop.ini
 *.log
 .idea/
 .vscode/
+secrets.*
+tools/script-properties.txt
