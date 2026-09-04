@@ -698,6 +698,74 @@ function paintSuccess(n, handle) {
   fillRefLink('refLink', handle);
   refreshShares(handle);
   showView('slipSuccessView');
+  const stamp = document.querySelector('#slipSuccessView .stamp');
+  if (stamp) {
+    stamp.classList.remove('burst');
+    void stamp.offsetWidth;
+    stamp.classList.add('burst');
+  }
+  fireConfetti();
+}
+
+let confettiRun = 0;
+function fireConfetti() {
+  const canvas = $('confetti');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  const run = ++confettiRun;
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  canvas.classList.add('on');
+  const colors = ['#c5a46d', '#d4c08a', '#e6d5a0', '#b89a5c', '#ccff00', '#c5d94a'];
+  const bits = [];
+  for (let i = 0; i < 140; i++) {
+    bits.push({
+      x: Math.random() * canvas.width,
+      y: -24 - Math.random() * canvas.height * 0.55,
+      w: 4 + Math.random() * 6,
+      h: 9 + Math.random() * 8,
+      vx: (Math.random() - 0.5) * 0.9,
+      vy: 1.1 + Math.random() * 1.8,
+      rot: Math.random() * Math.PI * 2,
+      vr: (Math.random() - 0.5) * 0.08,
+      color: colors[i % colors.length],
+      drift: (Math.random() - 0.5) * 0.025
+    });
+  }
+  const start = performance.now();
+  const life = 4200;
+  const fade = 900;
+  function tick(now) {
+    if (run !== confettiRun) return;
+    const t = now - start;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const fadeIn = Math.min(1, t / 180);
+    const fadeOut = t > life - fade ? Math.max(0, 1 - (t - (life - fade)) / fade) : 1;
+    const alpha = fadeIn * fadeOut;
+    bits.forEach((p) => {
+      p.vy += 0.028;
+      p.vx += p.drift;
+      p.vx *= 0.996;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rot += p.vr;
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    });
+    if (t < life) {
+      requestAnimationFrame(tick);
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      canvas.classList.remove('on');
+    }
+  }
+  requestAnimationFrame(tick);
 }
 
 const submitBtn = $('btnSubmitSlip');

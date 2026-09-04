@@ -954,6 +954,17 @@ section[id] { scroll-margin-top: calc(var(--header) + 18px); }
 }
 .btn-copy:hover { color: #fff; background: rgba(192, 38, 39, 0.12); }
 
+#confetti {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 80;
+  pointer-events: none;
+  display: none;
+}
+#confetti.on { display: block; }
+
 .state-panel {
   display: none;
   text-align: center;
@@ -969,6 +980,14 @@ section[id] { scroll-margin-top: calc(var(--header) + 18px); }
   color: var(--accent);
   transform: rotate(-5deg);
   margin-bottom: 18px;
+}
+.stamp.burst {
+  animation: stampBurst 0.7s ease-out;
+}
+@keyframes stampBurst {
+  0% { transform: rotate(-5deg) scale(0.72); filter: brightness(1.8); }
+  55% { transform: rotate(-3deg) scale(1.08); filter: brightness(1.25); }
+  100% { transform: rotate(-5deg) scale(1); filter: none; }
 }
 .stamp.gold {
   border-color: var(--gold);
