@@ -49,6 +49,8 @@ html, body {
   color: var(--text);
   font-family: 'Inter', system-ui, sans-serif;
   cursor: url('assets/cursors/cursor.png') 16 16, crosshair;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 body { overflow-x: hidden; }
@@ -65,8 +67,15 @@ a, button, input, label, summary, [role="checkbox"], .cursor-pointer {
   cursor: url('assets/cursors/cursor-click.png') 16 16, pointer;
 }
 
-button, [role="checkbox"] { user-select: none; }
-input, textarea { user-select: text; }
+h1, h2, h3, p, span, a, button, label, li, summary, strong {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+input, textarea {
+  -webkit-user-select: text;
+  user-select: text;
+}
 
 button, input { font: inherit; color: inherit; }
 
