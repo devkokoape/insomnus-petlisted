@@ -25,7 +25,14 @@
   --header: 64px;
 }
 
-*, *::before, *::after { box-sizing: border-box; }
+*, *::before, *::after {
+  box-sizing: border-box;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+}
 
 html {
   scroll-behavior: smooth;
@@ -67,14 +74,12 @@ a, button, input, label, summary, [role="checkbox"], .cursor-pointer {
   cursor: url('assets/cursors/cursor-click.png') 16 16, pointer;
 }
 
-h1, h2, h3, p, span, a, button, label, li, summary, strong {
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-input, textarea {
-  -webkit-user-select: text;
-  user-select: text;
+input:not([readonly]):not([disabled]),
+textarea:not([readonly]):not([disabled]) {
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  user-select: text !important;
 }
 
 button, input { font: inherit; color: inherit; }

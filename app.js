@@ -441,36 +441,6 @@ function saveLocal(data) {
   catch (e) {}
 }
 
-(function lockPage() {
-  function typing(el) {
-    if (!el) return false;
-    const tag = el.tagName;
-    return tag === 'INPUT' || tag === 'TEXTAREA' || el.isContentEditable;
-  }
-  document.addEventListener('contextmenu', (e) => {
-    if (!typing(e.target)) e.preventDefault();
-  });
-  document.addEventListener('selectstart', (e) => {
-    if (!typing(e.target)) e.preventDefault();
-  });
-  document.addEventListener('dragstart', (e) => {
-    if (!typing(e.target)) e.preventDefault();
-  });
-  document.addEventListener('copy', (e) => {
-    if (!typing(e.target)) e.preventDefault();
-  });
-  document.addEventListener('keydown', (e) => {
-    const k = String(e.key || '').toUpperCase();
-    if (k === 'F12') { e.preventDefault(); return; }
-    if (e.ctrlKey && e.shiftKey && (k === 'I' || k === 'J' || k === 'C' || k === 'K')) {
-      e.preventDefault();
-      return;
-    }
-    if (e.ctrlKey && (k === 'U' || k === 'S')) { e.preventDefault(); return; }
-    if (e.metaKey && e.altKey && k === 'I') e.preventDefault();
-  });
-})();
-
 /* Header */
 const header = $('header');
 window.addEventListener('scroll', () => {
