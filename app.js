@@ -382,12 +382,10 @@ function paintXSession() {
   const s = loadSession();
   const paper = $('slipPaper');
   const btnH = $('btnHeaderX');
-  const btnM = $('btnMobileX');
   const user = $('xUser');
   if (s && s.id) {
     if (paper) paper.classList.remove('locked');
     if (btnH) btnH.hidden = true;
-    if (btnM) btnM.hidden = true;
     if (user) {
       user.hidden = false;
       const name = $('xName');
@@ -401,7 +399,6 @@ function paintXSession() {
   } else {
     if (paper) paper.classList.add('locked');
     if (btnH) btnH.hidden = false;
-    if (btnM) btnM.hidden = false;
     if (user) user.hidden = true;
   }
   if (typeof renderBoardPage === 'function') renderBoardPage();
@@ -446,18 +443,10 @@ function saveLocal(data) {
 
 /* Header */
 const header = $('header');
-const menuBtn = $('menuBtn');
-const mobileMenu = $('mobileMenu');
 window.addEventListener('scroll', () => {
   if (header) header.classList.toggle('scrolled', window.scrollY > 60);
 });
-if (menuBtn && mobileMenu) {
-  menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('open'));
-  mobileMenu.querySelectorAll('a').forEach((a) => {
-    a.addEventListener('click', () => mobileMenu.classList.remove('open'));
-  });
-}
-['btnHeaderX', 'btnGateX', 'btnMobileX'].forEach((id) => {
+['btnHeaderX', 'btnGateX'].forEach((id) => {
   const el = $(id);
   if (el) el.addEventListener('click', () => startXLogin());
 });
