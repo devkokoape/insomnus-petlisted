@@ -18,6 +18,21 @@ const SOCIAL_POSTS = [
   { id: 't5', url: 'https://x.com/KokoApe_/status/2039587520753832060' }
 ];
 const TASK_PTS = { follow: 100, discord: 100, like: 5, retweet: 10, quote: 15 };
+const SB_URL = 'https://murnfprvourhkmieuref.supabase.co';
+const SB_KEY = 'sb_publishable_EL3A6f2X9DlNgZap4MxCHQ_tLl4Axfc';
+let sb = null;
+
+function isLocalHost() {
+  return /^(localhost|127\.0\.0\.1)$/i.test(location.hostname);
+}
+
+function sbClient() {
+  if (sb) return sb;
+  if (window.supabase && window.supabase.createClient) {
+    sb = window.supabase.createClient(SB_URL, SB_KEY);
+  }
+  return sb;
+}
 /* Google Cloud → APIs & Services → Credentials → OAuth client (Web). Free.
    Also set GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET in tools/script-properties.txt */
 const GOOGLE_CLIENT_ID = '866978225999-66emqrflkhjbqlfo8aka27lp0i8qm2re.apps.googleusercontent.com';
@@ -104,6 +119,87 @@ function redirectUri() {
   return location.origin + path;
 }
 
+async function sbHeaders(extra) {
+  const headers = {
+    apikey: SB_KEY,
+    Authorization: 'Bearer ' + SB_KEY,
+    'Content-Type': 'application/json',
+    Prefer: 'return=representation'
+  };
+  const client = sbClient();
+  if (client) {
+    try {
+      const { data } = await client.auth.getSession();
+      if (data && data.session && data.session.access_token) {
+        headers.Authorization = 'Bearer ' + data.session.access_token;
+      }
+    } catch (e) {}
+  }
+  if (extra) Object.keys(extra).forEach((k) => { headers[k] = extra[k]; });
+  return headers;
+}
+
+async function sbRest(method, path, query, body) {
+  const url = SB_URL + '/rest/v1' + path + (query ? '?' + query : '');
+  const extra = (method === 'POST' && query && query.indexOf('on_conflict') >= 0)
+    ? { Prefer: 'resolution=merge-duplicates,return=representation' }
+    : null;
+  const res = await fetch(url, {
+    method: method,
+    headers: await sbHeaders(extra),
+    body: body ? JSON.stringify(body) : undefined
+  });
+  const text = await res.text();
+  let data = null;
+  try { data = text ? JSON.parse(text) : null; } catch (e) { data = text; }
+  return { ok: res.ok, status: res.status, data: data };
+}
+
+function taskPtsId(id) {
+  const tid = String(id || '');
+  if (tid === 'follow-insomnusxyz') return 0;
+  if (tid.indexOf('follow-') === 0) return 100;
+  if (tid.indexOf('discord-') === 0) return 100;
+  if (tid.indexOf('like-') === 0) return 5;
+  if (tid.indexOf('rt-') === 0) return 10;
+  if (tid.indexOf('quote-') === 0) return 15;
+  return 0;
+}
+
+function rankFromLive(apps, claims) {
+  const people = {};
+  (apps || []).forEach((r) => {
+    const h = cleanHandle(r.handle).toLowerCase();
+    if (!isHandle(h)) return;
+    if (!people[h]) {
+      people[h] = {
+        handle: h,
+        score: SCORE.follow + SCORE.quote + SCORE.seal,
+        refs: 0,
+        extras: 0,
+        at: r.created_at || ''
+      };
+    }
+  });
+  (apps || []).forEach((r) => {
+    const by = cleanHandle(r.ref).toLowerCase();
+    if (people[by]) {
+      people[by].refs += 1;
+      people[by].score += SCORE.ref;
+    }
+  });
+  (claims || []).forEach((c) => {
+    const h = cleanHandle(c.handle).toLowerCase();
+    const pts = taskPtsId(c.task_id);
+    if (h && pts && people[h]) {
+      people[h].extras += pts;
+      people[h].score += pts;
+    }
+  });
+  return Object.keys(people).map((k) => people[k])
+    .sort((a, b) => b.score - a.score || String(a.at).localeCompare(String(b.at)));
+}
+
 function b64url(bytes) {
   let s = '';
   bytes.forEach((b) => { s += String.fromCharCode(b); });
@@ -151,7 +247,74 @@ function xNotConfigured(msg) {
   if (note) note.textContent = msg || 'Add GOOGLE_CLIENT_ID in app.js and script-properties.txt.';
 }
 
+async function startSupabaseGoogle() {
+  const client = sbClient();
+  if (!client) {
+    xNotConfigured('Auth failed to load. Refresh and try again.');
+    return;
+  }
+  const { error } = await client.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: redirectUri(),
+      queryParams: { prompt: 'select_account' }
+    }
+  });
+  if (error) {
+    xNotConfigured(error.message || 'Enable Google in Supabase Auth, then add the callback in Google Cloud.');
+  }
+}
+
+async function upsertUserFromSession(session) {
+  if (!session || !session.user) return;
+  const u = session.user;
+  const meta = u.user_metadata || {};
+  const name = meta.full_name || meta.name || u.email || 'Google';
+  const pfp = meta.avatar_url || meta.picture || '';
+  const email = u.email || '';
+  let handle = (email.split('@')[0] || '').replace(/[^A-Za-z0-9_]/g, '').slice(0, 15);
+  if (!handle) handle = ('g' + String(u.id).replace(/-/g, '')).slice(0, 15);
+  saveSession({
+    provider: 'google',
+    id: String(u.id),
+    handle: handle,
+    name: name,
+    pfp: pfp,
+    at: Date.now()
+  });
+  await sbRest('POST', '/users', 'on_conflict=xid', {
+    xid: String(u.id),
+    handle: handle.toLowerCase(),
+    name: name,
+    pfp: pfp,
+    last_login: new Date().toISOString()
+  });
+}
+
+async function hydrateSupabaseSession() {
+  const client = sbClient();
+  if (!client) return false;
+  const q = new URLSearchParams(location.search);
+  if (q.get('code')) {
+    try { await client.auth.exchangeCodeForSession(q.get('code')); } catch (e) {}
+    const clean = new URL(location.href);
+    clean.searchParams.delete('code');
+    clean.searchParams.delete('state');
+    const keepRef = loadRef();
+    if (keepRef) clean.searchParams.set('ref', keepRef);
+    history.replaceState({}, '', clean.pathname + (clean.search || ''));
+  }
+  const { data } = await client.auth.getSession();
+  if (!data || !data.session) return false;
+  await upsertUserFromSession(data.session);
+  return true;
+}
+
 async function startXLogin() {
+  if (!isLocalHost()) {
+    await startSupabaseGoogle();
+    return;
+  }
   if (!GOOGLE_CLIENT_ID) {
     xNotConfigured('Create a free Google OAuth client, then paste the Client ID in app.js.');
     const paper = $('slipPaper');
@@ -245,6 +408,8 @@ function paintXSession() {
 
 function logoutX() {
   clearSession();
+  const client = sbClient();
+  if (client) client.auth.signOut().catch(function () {});
   paintXSession();
 }
 
@@ -425,6 +590,31 @@ async function sendApply(addr, handle, post, ref, xid) {
     if (data && data.error === 'seen') return 'seen';
     if (data && data.ok) return data.n || true;
     if (data && data.error) return false;
+  } catch (e) {}
+  try {
+    await sbRest('POST', '/users', 'on_conflict=xid', {
+      xid: xid,
+      handle: handle.toLowerCase(),
+      name: (loadSession() && loadSession().name) || handle,
+      pfp: (loadSession() && loadSession().pfp) || '',
+      last_login: new Date().toISOString()
+    });
+    const seen = await sbRest('GET', '/applications', 'address=eq.' + encodeURIComponent(addr.toLowerCase()) + '&select=id,handle');
+    if (seen.ok && Array.isArray(seen.data) && seen.data.length) return 'seen';
+    const ins = await sbRest('POST', '/applications', '', {
+      xid: xid,
+      handle: handle.toLowerCase(),
+      address: addr.toLowerCase(),
+      post: post,
+      ref: ref || '',
+      status: 'pending'
+    });
+    if (!ins.ok) {
+      const msg = typeof ins.data === 'string' ? ins.data : JSON.stringify(ins.data || '');
+      if (/duplicate|unique/i.test(msg)) return 'seen';
+      return false;
+    }
+    return true;
   } catch (e) {}
   return false;
 }
@@ -754,10 +944,10 @@ async function loadBoard() {
   } catch (e) {}
   if (!rows.length) {
     try {
-      const res = await fetch(APPLY_SCRIPT + (APPLY_SCRIPT.includes('?') ? '&' : '?') + 'board=1');
-      if (res.ok) {
-        const data = await res.json();
-        if (data && Array.isArray(data.rows) && data.rows.length) rows = data.rows;
+      const apps = await sbRest('GET', '/applications', 'select=handle,ref,created_at&order=created_at.asc');
+      const claims = await sbRest('GET', '/task_claims', 'select=handle,task_id');
+      if (apps.ok && Array.isArray(apps.data) && apps.data.length) {
+        rows = rankFromLive(apps.data, (claims.ok && claims.data) || []);
       }
     } catch (e) {}
   }
@@ -892,16 +1082,20 @@ async function claimTask(id, fromQueue) {
     const box = $('agreeCheckbox1');
     if (box) box.setAttribute('aria-checked', 'true');
   }
+  const payload = {
+    xid: sess.id,
+    handle: youHandle() || '',
+    task_id: id
+  };
   try {
     await fetch('/task', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        xid: sess.id,
-        handle: youHandle() || '',
-        task_id: id
-      })
+      body: JSON.stringify(payload)
     });
+  } catch (e) {}
+  try {
+    await sbRest('POST', '/task_claims', 'on_conflict=xid,task_id', payload);
   } catch (e) {}
   return true;
 }
@@ -1002,9 +1196,14 @@ loadBoard();
 
 (async function bootX() {
   const q = new URLSearchParams(location.search);
-  if (q.get('code') && q.get('state')) {
+  if (isLocalHost() && q.get('code') && q.get('state')) {
     await finishXLogin(q.get('code'), q.get('state'));
     return;
+  }
+  const ok = await hydrateSupabaseSession();
+  if (ok) {
+    if (typeof flushPendingTasks === 'function') flushPendingTasks();
+    if (typeof loadBoard === 'function') loadBoard();
   }
   paintXSession();
 })();
