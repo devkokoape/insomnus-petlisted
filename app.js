@@ -652,7 +652,7 @@ function sharePostFor(handle) {
   const text = [
     lead,
     '',
-    'Insomnus is a dungeon game. You and your pet fight through the night. Embers Wake is already live.',
+    'Insomnus is a dungeon game on Robinhood. You and your pet fight through the night. Embers Wake is already live.',
     '',
     isHandle(handle) ? ('Join with my link (@' + cleanHandle(handle) + '):') : 'Join the petlist:',
     link
