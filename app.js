@@ -600,7 +600,18 @@ async function sendApply(addr, handle, post, ref, xid) {
       last_login: new Date().toISOString()
     });
     const seenX = await sbRest('GET', '/applications', 'xid=eq.' + encodeURIComponent(xid) + '&select=id,handle,address');
-    if (seenX.ok && Array.isArray(seenX.data) && seenX.data.length) return 'seen';
+    if (seenX.ok && Array.isArray(seenX.data) && seenX.data.length) {
+      const row = seenX.data[0];
+      if (String(row.address || '').toLowerCase() === addr.toLowerCase()) return 'seen';
+      const patch = await sbRest('PATCH', '/applications', 'xid=eq.' + encodeURIComponent(xid), {
+        address: addr.toLowerCase(),
+        handle: handle.toLowerCase(),
+        post: post,
+        ref: ref || ''
+      });
+      if (patch.ok) return 'updated';
+      return 'seen';
+    }
     const seen = await sbRest('GET', '/applications', 'address=eq.' + encodeURIComponent(addr.toLowerCase()) + '&select=id,handle');
     if (seen.ok && Array.isArray(seen.data) && seen.data.length) return 'seen';
     const ins = await sbRest('POST', '/applications', '', {
@@ -725,9 +736,18 @@ if (submitBtn) {
 
     const ref = v.ref && v.ref.toLowerCase() !== v.handle.toLowerCase() ? v.ref : '';
     const result = await sendApply(v.wallet, v.handle, v.post, ref, sess.id);
-    if (result === 'seen') {
+    if (result === 'seen' || result === 'updated') {
+      saveLocal({
+        address: v.wallet.toLowerCase(),
+        handle: v.handle,
+        xid: sess.id || '',
+        post: v.post,
+        ref: ref,
+        at: Date.now()
+      });
       paintAlready(v.wallet, v.handle);
       submitBtn.disabled = false;
+      if ($('disabledNote')) $('disabledNote').textContent = 'one wallet · one slot';
       return;
     }
     if (!result) {

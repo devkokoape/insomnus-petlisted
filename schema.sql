@@ -69,6 +69,12 @@ create policy applications_write_ins on public.applications
   for insert to anon, authenticated
   with check (true);
 
+drop policy if exists applications_write_upd on public.applications;
+create policy applications_write_upd on public.applications
+  for update to anon, authenticated
+  using (true)
+  with check (true);
+
 drop policy if exists task_claims_write_ins on public.task_claims;
 create policy task_claims_write_ins on public.task_claims
   for insert to anon, authenticated
