@@ -1084,7 +1084,7 @@ function extraTaskScore() {
 
 function xIntent(task) {
   if (task.type === 'follow') {
-    return 'https://x.com/' + encodeURIComponent(task.screen);
+    return 'https://x.com/intent/follow?screen_name=' + encodeURIComponent(task.screen);
   }
   if (task.type === 'discord') {
     return task.url || DISCORD_URL;
@@ -1098,7 +1098,45 @@ function xIntent(task) {
   if (task.type === 'quote' || task.type === 'comment') {
     return 'https://x.com/intent/tweet?in_reply_to=' + encodeURIComponent(task.tweetId);
   }
-  return task.url || 'https://x.com/' + X_ACCOUNT;
+  if (task.type === 'share') {
+    return sharePostFor(youHandle()).href;
+  }
+  return task.url || 'https://x.com/intent/user?screen_name=' + encodeURIComponent(X_ACCOUNT);
+}
+
+function openXPopup(url) {
+  if (!url || url === '#') return false;
+  if (/discord\.gg|discord\.com/i.test(url)) {
+    window.open(url, '_blank', 'noopener');
+    return true;
+  }
+  const w = 550;
+  const h = 560;
+  const sw = (window.screen && window.screen.width) || 1200;
+  const sh = (window.screen && window.screen.height) || 800;
+  const left = Math.max(0, Math.round((sw - w) / 2));
+  const top = Math.max(0, Math.round((sh - h) / 2));
+  const feat = 'scrollbars=yes,resizable=yes,toolbar=no,location=yes,status=no,width=' + w + ',height=' + h + ',left=' + left + ',top=' + top;
+  const win = window.open(url, 'insomnus-x-intent', feat);
+  if (win && typeof win.focus === 'function') win.focus();
+  if (!win) window.open(url, '_blank', 'noopener');
+  return true;
+}
+
+function bindXPopups(root) {
+  (root || document).querySelectorAll('a.js-x-popup, a[data-task]').forEach((el) => {
+    if (el.dataset.xPopupBound === '1') return;
+    el.dataset.xPopupBound = '1';
+    el.addEventListener('click', (e) => {
+      const id = el.getAttribute('data-task');
+      const task = id ? allSocialTasks().find((t) => t.id === id) : null;
+      if (task && task.type === 'discord') return;
+      const url = (task ? xIntent(task) : '') || el.getAttribute('href') || '';
+      if (!url || url === '#') return;
+      e.preventDefault();
+      openXPopup(url);
+    });
+  });
 }
 
 function setTaskNote(msg) {
@@ -1228,6 +1266,7 @@ function renderTaskList() {
   box.querySelectorAll('[data-task]').forEach((btn) => {
     btn.addEventListener('click', () => onTaskTap(btn.getAttribute('data-task')));
   });
+  bindXPopups(box);
   if (typeof refreshShares === 'function') refreshShares();
 }
 
@@ -1235,6 +1274,7 @@ function renderTaskList() {
   const el = $(id);
   if (el) el.addEventListener('click', () => onTaskTap('share-x'));
 });
+bindXPopups(document);
 
 async function onTaskTap(id) {
   const task = allSocialTasks().find((t) => t.id === id);

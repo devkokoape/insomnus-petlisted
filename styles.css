@@ -838,14 +838,21 @@ section[id] { scroll-margin-top: calc(var(--header) + 18px); }
 .check {
   display: flex;
   align-items: center;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: 8px 12px;
   user-select: none;
   border: 1px solid var(--frame);
   background: rgba(12, 10, 8, 0.65);
   padding: 9px 12px;
 }
 .check:hover { border-color: #5c4c40; }
+.check .txt { flex: 1 1 140px; }
+.check .field-jumps {
+  margin-left: auto;
+  flex: 0 1 auto;
+}
 .check .btn-pinned { margin-left: auto; }
+.check .field-jumps .btn-pinned { margin-left: 0; }
 .check .box {
   width: 18px;
   height: 18px;
