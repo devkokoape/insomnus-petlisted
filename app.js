@@ -18,7 +18,6 @@ const SOCIAL_POSTS = [
   { id: 't5', url: 'https://x.com/KokoApe_/status/2039587520753832060' }
 ];
 const TASK_PTS = { follow: 100, discord: 100, like: 5, retweet: 10, quote: 15, share: 50 };
-const SHARE_GIF = 'https://petlist.insomnus.xyz/assets/gifs/DsGOb8.gif';
 const SB_URL = 'https://murnfprvourhkmieuref.supabase.co';
 const SB_KEY = 'sb_publishable_EL3A6f2X9DlNgZap4MxCHQ_tLl4Axfc';
 let sb = null;
@@ -663,9 +662,7 @@ function sharePostFor(handle) {
     'Insomnus is a dungeon game. You and your pet fight through the night. Embers Wake is already live.',
     '',
     isHandle(handle) ? ('Join with my link (@' + cleanHandle(handle) + '):') : 'Join the petlist:',
-    link,
-    '',
-    SHARE_GIF
+    link
   ].join('\n');
   return {
     link: link,
