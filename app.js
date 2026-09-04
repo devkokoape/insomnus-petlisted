@@ -48,10 +48,11 @@ function isHandle(raw) {
 }
 
 function refLinkFor(handle) {
-  const u = new URL(location.href);
-  u.search = 'ref=' + encodeURIComponent(cleanHandle(handle).toLowerCase());
-  u.hash = '';
-  return u.toString();
+  const host = location.hostname;
+  const origin = /insomnus\.xyz$/i.test(host)
+    ? 'https://petlist.insomnus.xyz'
+    : location.origin;
+  return origin + '/index.html?ref=' + encodeURIComponent(cleanHandle(handle).toLowerCase());
 }
 
 function readRefFromUrl() {
