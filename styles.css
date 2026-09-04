@@ -1103,6 +1103,14 @@ section[id] { scroll-margin-top: calc(var(--header) + 18px); }
   line-height: 1.6;
   font-size: 0.98rem;
 }
+.faq-item .faq-body a { color: var(--gold); }
+.faq-item .faq-body a:hover { color: #fff; }
+.faq-item .faq-body strong {
+  color: var(--gold-lit);
+  font-family: 'VT323', monospace;
+  letter-spacing: 2px;
+  font-weight: 400;
+}
 
 /* ===== FOOTER ===== */
 .board-sheet,
