@@ -885,6 +885,26 @@ section[id] { scroll-margin-top: calc(var(--header) + 18px); }
   padding: 12px 18px;
   font-size: 1.25rem;
 }
+.btn-share-x {
+  background: var(--accent);
+  color: #fff;
+  border-color: #3a2f2a;
+  box-shadow: 0 4px 0 #000, 0 0 16px rgba(0, 200, 5, 0.35);
+  animation: shareGlow 1.7s ease-in-out infinite;
+}
+.btn-share-x:hover {
+  background: var(--accent-hot);
+  box-shadow: 0 4px 0 #000, 0 0 22px rgba(0, 200, 5, 0.55);
+}
+.btn-share-x.done {
+  animation: none;
+  opacity: 0.55;
+  box-shadow: 0 3px 0 #000;
+}
+@keyframes shareGlow {
+  0%, 100% { box-shadow: 0 4px 0 #000, 0 0 10px rgba(0, 200, 5, 0.25); }
+  50% { box-shadow: 0 4px 0 #000, 0 0 22px rgba(0, 200, 5, 0.6); }
+}
 .disabled-note {
   font-family: 'VT323', monospace;
   color: var(--dim);

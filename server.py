@@ -30,6 +30,8 @@ def task_pts(task_id):
         return 10
     if tid.startswith("quote-"):
         return 15
+    if tid.startswith("share-"):
+        return 50
     return None
 HANDLE_RE = re.compile(r"^[A-Za-z0-9_]{1,15}$")
 WALLET_RE = re.compile(r"^0x[a-fA-F0-9]{40}$")

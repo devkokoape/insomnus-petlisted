@@ -17,7 +17,8 @@ const SOCIAL_POSTS = [
   { id: 't4', url: 'https://x.com/insomnusxyz/status/2045873017813934411' },
   { id: 't5', url: 'https://x.com/KokoApe_/status/2039587520753832060' }
 ];
-const TASK_PTS = { follow: 100, discord: 100, like: 5, retweet: 10, quote: 15 };
+const TASK_PTS = { follow: 100, discord: 100, like: 5, retweet: 10, quote: 15, share: 50 };
+const SHARE_GIF = 'https://petlist.insomnus.xyz/assets/gifs/DsGOb8.gif';
 const SB_URL = 'https://murnfprvourhkmieuref.supabase.co';
 const SB_KEY = 'sb_publishable_EL3A6f2X9DlNgZap4MxCHQ_tLl4Axfc';
 let sb = null;
@@ -163,6 +164,7 @@ function taskPtsId(id) {
   if (tid.indexOf('like-') === 0) return 5;
   if (tid.indexOf('rt-') === 0) return 10;
   if (tid.indexOf('quote-') === 0) return 15;
+  if (tid.indexOf('share-') === 0) return 50;
   return 0;
 }
 
@@ -651,22 +653,24 @@ function fillRefLink(inputId, handle) {
 function sharePostFor(handle) {
   const link = isHandle(handle)
     ? refLinkFor(handle)
-    : (location.origin + (location.pathname || '/'));
+    : (location.origin + (location.pathname || '/') || 'https://petlist.insomnus.xyz/');
   const lead = isHandle(handle)
-    ? 'I just applied to the petlisted application from @insomnusxyz.'
-    : 'The petlisted application from @insomnusxyz is open.';
+    ? 'I just applied to the @insomnusxyz petlist.'
+    : 'The @insomnusxyz petlist is open.';
   const text = [
     lead,
     '',
     'Insomnus is a dungeon game. You and your pet fight through the night. Embers Wake is already live.',
     '',
     isHandle(handle) ? ('Join with my link (@' + cleanHandle(handle) + '):') : 'Join the petlist:',
-    link
+    link,
+    '',
+    SHARE_GIF
   ].join('\n');
   return {
     link: link,
     text: text,
-    href: 'https://x.com/intent/post?text=' + encodeURIComponent(text)
+    href: 'https://x.com/intent/post?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(link)
   };
 }
 
@@ -814,7 +818,7 @@ async function fetchMyApplication(xid) {
   }
 })();
 
-const SCORE = { follow: 100, like: 5, retweet: 10, quote: 15, seal: 50, ref: 80 };
+const SCORE = { follow: 100, like: 5, retweet: 10, quote: 15, seal: 50, share: 50, ref: 80 };
 const BASE = SCORE.follow + SCORE.quote + SCORE.seal;
 const EXAMPLE_BOARD = [
   ['nightwarden', 8],
@@ -1027,6 +1031,13 @@ function allSocialTasks() {
       label: 'Join',
       url: DISCORD_URL,
       once: true
+    },
+    {
+      id: 'share-x',
+      type: 'share',
+      pts: TASK_PTS.share,
+      label: 'Share on X',
+      once: true
     }
   ];
   SOCIAL_POSTS.forEach((p) => {
@@ -1171,8 +1182,12 @@ function renderTaskList() {
     html += oneCard('FOLLOW', 'Follow Insomnus on X',
       '<a class="btn-ghost' + (done ? ' done' : '') + '" data-task="' + ins.id + '" href="' + xIntent(ins) + '" target="_blank" rel="noopener">Follow <em>+' + ins.pts + '</em></a>');
   }
-  html += oneCard('REPEATS', 'Share your link',
-    '<a class="btn-primary" id="btnEarnShare" target="_blank" rel="noopener" href="#">Share <em>+' + SCORE.ref + '</em></a>');
+  const share = allSocialTasks().find((t) => t.type === 'share');
+  if (share) {
+    const done = Boolean(claims[share.id]);
+    html += oneCard('ONCE', 'Share on X',
+      '<a class="btn-primary btn-share-x' + (done ? ' done' : '') + '" id="btnEarnShare" data-task="' + share.id + '" target="_blank" rel="noopener" href="#">Share on X <em>+' + share.pts + '</em></a>');
+  }
   if (koko) {
     const done = Boolean(claims[koko.id]);
     html += oneCard('FOLLOW', 'Follow KokoApe on X',
@@ -1208,11 +1223,18 @@ function renderTaskList() {
   if (typeof refreshShares === 'function') refreshShares();
 }
 
+['btnShareX', 'btnShareAlreadyX'].forEach((id) => {
+  const el = $(id);
+  if (el) el.addEventListener('click', () => onTaskTap('share-x'));
+});
+
 async function onTaskTap(id) {
   const task = allSocialTasks().find((t) => t.id === id);
   if (!task) return;
   if (loadTaskClaims()[id]) {
-    setTaskNote('Already sealed. Share is the loop.');
+    setTaskNote(task.type === 'share'
+      ? 'Share already counted once. Referrals still pay +80.'
+      : 'Already sealed. Share is the loop.');
     return;
   }
   const ok = await claimTask(id);
