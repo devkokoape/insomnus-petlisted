@@ -871,49 +871,6 @@ async function fetchMyApplication(xid) {
 })();
 
 const SCORE = { follow: 100, like: 5, retweet: 10, quote: 15, seal: 50, share: 50, ref: 80 };
-const BASE = SCORE.follow + SCORE.quote + SCORE.seal;
-const EXAMPLE_BOARD = [
-  ['nightwarden', 8],
-  ['emberking', 7],
-  ['sleeplessxyz', 7],
-  ['gloopkeeper', 6],
-  ['demondoggo', 6],
-  ['healbotfan', 5],
-  ['wakewalker', 5],
-  ['somniarun', 4],
-  ['dungeonrat', 4],
-  ['robinhoodog', 4],
-  ['lasttorch', 3],
-  ['redrain_', 3],
-  ['orbhunter', 3],
-  ['ashsleeper', 3],
-  ['voiddash', 2],
-  ['bonechoir', 2],
-  ['cinderpath', 2],
-  ['noarmor', 2],
-  ['staminadry', 2],
-  ['hordeyes', 2],
-  ['quietslash', 1],
-  ['marksmist', 1],
-  ['iceward', 1],
-  ['holyglint', 1],
-  ['repulse', 1],
-  ['dashonly', 1],
-  ['onepotion', 1],
-  ['nextrun', 1],
-  ['stillalive', 0],
-  ['justgas', 0],
-  ['walletopen', 0],
-  ['firstseal', 0],
-  ['latequote', 0],
-  ['followdone', 0],
-  ['pinreplied', 0],
-  ['noaltacc', 0],
-  ['onewallet', 0],
-  ['sleeplessjr', 0],
-  ['emberpup', 0],
-  ['lastinline', 0]
-].map(([handle, refs]) => ({ handle: handle, refs: refs, score: BASE + refs * SCORE.ref }));
 
 function rankRows(rows) {
   const copy = rows.map((r) => ({
@@ -1044,7 +1001,6 @@ async function loadBoard() {
       }
     } catch (e) {}
   }
-  if (!rows.length) rows = EXAMPLE_BOARD;
   setBoard(rows);
 }
 
@@ -1300,19 +1256,13 @@ async function onTaskTap(id) {
   }
 }
 
-function scheduleIdle(fn) {
-  if (typeof requestIdleCallback === 'function') {
-    requestIdleCallback(fn, { timeout: 900 });
-    return;
-  }
-  requestAnimationFrame(function () { setTimeout(fn, 0); });
-}
-
 renderTaskList();
 if (loadSession() && loadSession().id) flushPendingTasks();
 
-setBoard(EXAMPLE_BOARD);
-scheduleIdle(loadBoard);
+if ($('boardRows')) {
+  $('boardRows').innerHTML = '<div class="board-empty">Loading the ranking…</div>';
+}
+loadBoard();
 
 (async function bootX() {
   const q = new URLSearchParams(location.search);
