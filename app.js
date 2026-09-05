@@ -983,6 +983,21 @@ function setBoard(rows) {
   renderBoardPage();
 }
 
+async function sbRestAll(path, query) {
+  const page = 1000;
+  const all = [];
+  let from = 0;
+  for (let n = 0; n < 30; n++) {
+    const q = (query ? query + '&' : '') + 'limit=' + page + '&offset=' + from;
+    const res = await sbRest('GET', path, q);
+    if (!res.ok || !Array.isArray(res.data)) break;
+    all.push.apply(all, res.data);
+    if (res.data.length < page) break;
+    from += page;
+  }
+  return all;
+}
+
 async function loadBoard() {
   let rows = [];
   try {
@@ -994,11 +1009,9 @@ async function loadBoard() {
   } catch (e) {}
   if (!rows.length) {
     try {
-      const apps = await sbRest('GET', '/applications', 'select=handle,ref,created_at&order=created_at.asc');
-      const claims = await sbRest('GET', '/task_claims', 'select=handle,task_id');
-      if (apps.ok && Array.isArray(apps.data) && apps.data.length) {
-        rows = rankFromLive(apps.data, (claims.ok && claims.data) || []);
-      }
+      const apps = await sbRestAll('/applications', 'select=handle,ref,created_at&order=created_at.asc');
+      const claims = await sbRestAll('/task_claims', 'select=handle,task_id');
+      if (apps.length) rows = rankFromLive(apps, claims);
     } catch (e) {}
   }
   setBoard(rows);
