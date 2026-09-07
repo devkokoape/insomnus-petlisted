@@ -983,35 +983,63 @@ function setBoard(rows) {
   renderBoardPage();
 }
 
+async function sbRestPage(path, query, from, to, withCount) {
+  const url = SB_URL + '/rest/v1' + path + (query ? '?' + query : '');
+  const headers = {
+    apikey: SB_KEY,
+    Authorization: 'Bearer ' + SB_KEY,
+    Range: from + '-' + to
+  };
+  if (withCount) headers.Prefer = 'count=exact';
+  const res = await fetch(url, { headers: headers });
+  const text = await res.text();
+  let data = [];
+  try { data = text ? JSON.parse(text) : []; } catch (e) { data = []; }
+  if (!Array.isArray(data)) data = [];
+  let total = data.length;
+  const cr = res.headers.get('content-range') || '';
+  const m = cr.match(/\/(\d+)\s*$/);
+  if (m) total = Number(m[1]);
+  return { ok: res.ok, data: data, total: total };
+}
+
 async function sbRestAll(path, query) {
   const page = 1000;
-  const all = [];
-  let from = 0;
-  for (let n = 0; n < 30; n++) {
-    const q = (query ? query + '&' : '') + 'limit=' + page + '&offset=' + from;
-    const res = await sbRest('GET', path, q);
-    if (!res.ok || !Array.isArray(res.data)) break;
-    all.push.apply(all, res.data);
-    if (res.data.length < page) break;
-    from += page;
+  const first = await sbRestPage(path, query, 0, page - 1, true);
+  if (!first.ok) return [];
+  const all = first.data.slice();
+  const total = first.total || all.length;
+  const jobs = [];
+  for (let from = page; from < total && from < 50000; from += page) {
+    jobs.push(sbRestPage(path, query, from, from + page - 1, false));
+  }
+  if (jobs.length) {
+    const rest = await Promise.all(jobs);
+    rest.forEach((r) => {
+      if (r && r.ok && Array.isArray(r.data)) all.push.apply(all, r.data);
+    });
   }
   return all;
 }
 
 async function loadBoard() {
   let rows = [];
-  try {
-    const res = await fetch('/board');
-    if (res.ok) {
-      const data = await res.json();
-      if (data && Array.isArray(data.rows) && data.rows.length) rows = data.rows;
-    }
-  } catch (e) {}
+  if (isLocalHost()) {
+    try {
+      const res = await fetch('/board');
+      if (res.ok) {
+        const data = await res.json();
+        if (data && Array.isArray(data.rows) && data.rows.length) rows = data.rows;
+      }
+    } catch (e) {}
+  }
   if (!rows.length) {
     try {
-      const apps = await sbRestAll('/applications', 'select=handle,ref,created_at&order=created_at.asc');
-      const claims = await sbRestAll('/task_claims', 'select=handle,task_id');
-      if (apps.length) rows = rankFromLive(apps, claims);
+      const pair = await Promise.all([
+        sbRestAll('/applications', 'select=handle,ref,created_at'),
+        sbRestAll('/task_claims', 'select=handle,task_id')
+      ]);
+      if (pair[0].length) rows = rankFromLive(pair[0], pair[1]);
     } catch (e) {}
   }
   setBoard(rows);
