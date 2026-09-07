@@ -11,7 +11,7 @@ const SESSION_KEY = 'insomnus-x-session';
 const PKCE_KEY = 'insomnus-x-pkce';
 const TASK_KEY = 'insomnus-petlist-tasks';
 const SOCIAL_POSTS = [
-  { id: 't1', url: 'https://x.com/insomnusxyz/status/2050211623059763345' },
+  { id: 't6', url: 'https://x.com/insomnusxyz/status/2096935973255037142' },
   { id: 't2', url: 'https://x.com/insomnusxyz/status/2088255514048438439' },
   { id: 't3', url: 'https://x.com/insomnusxyz/status/2052616450284863879' },
   { id: 't4', url: 'https://x.com/insomnusxyz/status/2045873017813934411' },
