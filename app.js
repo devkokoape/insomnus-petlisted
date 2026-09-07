@@ -1049,6 +1049,124 @@ if ($('boardPrev')) $('boardPrev').addEventListener('click', () => { boardPage -
 if ($('boardNext')) $('boardNext').addEventListener('click', () => { boardPage += 1; renderBoardPage(); });
 if ($('f-x')) $('f-x').addEventListener('input', () => { renderBoardPage(); refreshShares(); });
 
+const WL_PHASES = {
+  ancient: { id: 'ancient', title: 'Ancient One' },
+  freegtd: { id: 'freegtd', title: 'GTD free' },
+  gtd: { id: 'gtd', title: 'Guaranteed' },
+  petlist: { id: 'petlist', title: 'Petlist' }
+};
+const WL_RANK = { ancient: 4, freegtd: 3, gtd: 2, petlist: 1 };
+async function fetchWlTier(addr) {
+  try {
+    const res = await sbRest('GET', '/whitelist', 'address=eq.' + encodeURIComponent(addr) + '&select=phase&limit=1');
+    if (res.ok && Array.isArray(res.data) && res.data[0] && res.data[0].phase) {
+      return String(res.data[0].phase);
+    }
+  } catch (e) {}
+  return '';
+}
+
+function parseWlQuery(raw) {
+  const s = String(raw || '').trim();
+  if (!s) return null;
+  if (isWallet(s)) return { type: 'wallet', value: s.toLowerCase() };
+  return null;
+}
+
+function pickPhase(sheetPhase, onPetlist) {
+  const a = sheetPhase && WL_RANK[sheetPhase] ? sheetPhase : '';
+  const b = onPetlist ? 'petlist' : '';
+  if (a && b) return (WL_RANK[a] >= WL_RANK[b]) ? a : b;
+  return a || b || '';
+}
+
+function paintWl(kind, text) {
+  const el = $('wl-inline');
+  if (!el) return;
+  el.classList.toggle('on', Boolean(text));
+  el.classList.toggle('hit', kind === 'hit');
+  el.textContent = text || '';
+}
+
+function lightWlGate(id) {
+  document.querySelectorAll('#whitelist .wl-gate').forEach((el) => {
+    el.classList.toggle('lit', Boolean(id) && el.getAttribute('data-gate') === id);
+  });
+}
+
+async function checkWhitelist() {
+  const q = parseWlQuery($('wl-input') && $('wl-input').value);
+  lightWlGate('');
+  if (!q) {
+    paintWl('', 'Need a 0x wallet.');
+    return;
+  }
+  paintWl('', 'Checking…');
+  let row = null;
+  try {
+    const res = await sbRest('GET', '/applications', 'address=eq.' + encodeURIComponent(q.value) + '&select=handle,address,created_at&limit=1');
+    if (res.ok && Array.isArray(res.data) && res.data.length) row = res.data[0];
+  } catch (e) {}
+  const addr = (row && row.address ? String(row.address) : q.value).toLowerCase();
+  const sheetPhase = await fetchWlTier(addr);
+  const phase = pickPhase(sheetPhase, Boolean(row));
+  const hit = phase && WL_PHASES[phase];
+  if (!hit) {
+    paintWl('', 'Not listed');
+    return;
+  }
+  lightWlGate(hit.id);
+  paintWl('hit', hit.title);
+}
+
+if ($('wl-check')) $('wl-check').addEventListener('click', checkWhitelist);
+if ($('wl-input')) {
+  $('wl-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      checkWhitelist();
+    }
+  });
+}
+
+const MINT_AT = Date.UTC(2026, 8, 14, 14, 0, 0);
+
+function padMint(n) {
+  return (n < 10 ? '0' : '') + n;
+}
+
+function tickMintClock() {
+  const when = $('wlMintWhen');
+  const count = $('wlMintCount');
+  if (!when && !count) return;
+  const local = new Date(MINT_AT);
+  if (when) {
+    when.textContent = 'Mint · ' + local.toLocaleString(undefined, {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      timeZoneName: 'short'
+    }) + ' · 14:00 UTC';
+  }
+  if (!count) return;
+  const left = MINT_AT - Date.now();
+  if (left <= 0) {
+    count.textContent = 'LIVE';
+    return;
+  }
+  const s = Math.floor(left / 1000);
+  const d = Math.floor(s / 86400);
+  const h = Math.floor((s % 86400) / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = s % 60;
+  count.textContent = d + 'd ' + padMint(h) + 'h ' + padMint(m) + 'm ' + padMint(sec) + 's';
+}
+tickMintClock();
+setInterval(tickMintClock, 1000);
+
 function tweetIdFrom(url) {
   const m = String(url || '').match(/\/status\/(\d+)/i);
   return m ? m[1] : '';
@@ -1092,9 +1210,9 @@ function allSocialTasks() {
   SOCIAL_POSTS.forEach((p) => {
     const tweetId = tweetIdFrom(p.url);
     tasks.push(
-      { id: 'like-' + p.id, type: 'like', pts: TASK_PTS.like, label: 'Like this', post: p, tweetId: tweetId, url: p.url, once: true },
-      { id: 'rt-' + p.id, type: 'retweet', pts: TASK_PTS.retweet, label: 'Repost this', post: p, tweetId: tweetId, url: p.url, once: true },
-      { id: 'quote-' + p.id, type: 'comment', pts: TASK_PTS.quote, label: 'Comment this', post: p, tweetId: tweetId, url: p.url, once: true }
+      { id: 'like-' + p.id, type: 'like', pts: TASK_PTS.like, label: 'Like', post: p, tweetId: tweetId, url: p.url, once: true },
+      { id: 'rt-' + p.id, type: 'retweet', pts: TASK_PTS.retweet, label: 'Repost', post: p, tweetId: tweetId, url: p.url, once: true },
+      { id: 'quote-' + p.id, type: 'comment', pts: TASK_PTS.quote, label: 'Comment', post: p, tweetId: tweetId, url: p.url, once: true }
     );
   });
   return tasks;
@@ -1147,20 +1265,7 @@ function xIntent(task) {
 
 function openXPopup(url) {
   if (!url || url === '#') return false;
-  if (/discord\.gg|discord\.com/i.test(url)) {
-    window.open(url, '_blank', 'noopener');
-    return true;
-  }
-  const w = 550;
-  const h = 560;
-  const sw = (window.screen && window.screen.width) || 1200;
-  const sh = (window.screen && window.screen.height) || 800;
-  const left = Math.max(0, Math.round((sw - w) / 2));
-  const top = Math.max(0, Math.round((sh - h) / 2));
-  const feat = 'scrollbars=yes,resizable=yes,toolbar=no,location=yes,status=no,width=' + w + ',height=' + h + ',left=' + left + ',top=' + top;
-  const win = window.open(url, 'insomnus-x-intent', feat);
-  if (win && typeof win.focus === 'function') win.focus();
-  if (!win) window.open(url, '_blank', 'noopener');
+  window.open(url, '_blank', 'noopener,noreferrer');
   return true;
 }
 
@@ -1170,9 +1275,11 @@ function bindXPopups(root) {
     el.dataset.xPopupBound = '1';
     el.addEventListener('click', (e) => {
       const id = el.getAttribute('data-task');
-      const task = id ? allSocialTasks().find((t) => t.id === id) : null;
-      if (task && task.type === 'discord') return;
-      const url = (task ? xIntent(task) : '') || el.getAttribute('href') || '';
+      if (id) {
+        e.preventDefault();
+        return;
+      }
+      const url = el.getAttribute('href') || '';
       if (!url || url === '#') return;
       e.preventDefault();
       openXPopup(url);
@@ -1252,10 +1359,51 @@ async function flushPendingTasks() {
   }
 }
 
+const TAP_KEY = 'insomnus-task-taps';
+let taskChecking = false;
+
+function loadTaps() {
+  try { return JSON.parse(localStorage.getItem(TAP_KEY) || '{}'); }
+  catch (e) { return {}; }
+}
+
+function bumpTap(id) {
+  const all = loadTaps();
+  const prev = all[id] || { n: 0, at: 0 };
+  const next = { n: prev.n + 1, at: Date.now(), since: prev.at || 0 };
+  all[id] = { n: next.n, at: next.at };
+  try { localStorage.setItem(TAP_KEY, JSON.stringify(all)); } catch (e) {}
+  return next;
+}
+
+function waitMs(ms) {
+  return new Promise(function (resolve) { setTimeout(resolve, ms); });
+}
+
+function taskActionLabel(t, done, taps) {
+  if (done) return t.label + ' <em>+' + t.pts + '</em>';
+  if (taps && taps.n >= 1) return 'Verify <em>+' + t.pts + '</em>';
+  return t.label + ' <em>+' + t.pts + '</em>';
+}
+
+async function playCheckSequence(btn, task) {
+  const steps = ['Reading X…', 'Checking…', 'Matching…'];
+  if (btn) {
+    btn.classList.add('checking');
+    btn.setAttribute('aria-busy', 'true');
+  }
+  for (let i = 0; i < steps.length; i++) {
+    if (btn) btn.innerHTML = steps[i];
+    setTaskNote(steps[i] + ' ' + (task && task.label ? task.label : ''));
+    await waitMs(650 + Math.floor(Math.random() * 550));
+  }
+}
+
 function renderTaskList() {
   const box = $('taskList');
   if (!box) return;
   const claims = loadTaskClaims();
+  const taps = loadTaps();
   const follows = allSocialTasks().filter((t) => t.type === 'follow');
   const discord = allSocialTasks().find((t) => t.type === 'discord');
   let html = '';
@@ -1267,23 +1415,23 @@ function renderTaskList() {
   if (ins) {
     const done = Boolean(claims[ins.id]);
     html += oneCard('FOLLOW', 'Follow Insomnus on X',
-      '<a class="btn-ghost' + (done ? ' done' : '') + '" data-task="' + ins.id + '" href="' + xIntent(ins) + '" target="_blank" rel="noopener">Follow <em>+' + ins.pts + '</em></a>');
+      '<a class="btn-ghost' + (done ? ' done' : '') + '" data-task="' + ins.id + '" href="' + xIntent(ins) + '" target="_blank" rel="noopener">' + taskActionLabel(ins, done, taps[ins.id]) + '</a>');
   }
   const share = allSocialTasks().find((t) => t.type === 'share');
   if (share) {
     const done = Boolean(claims[share.id]);
     html += oneCard('ONCE', 'Share on X',
-      '<a class="btn-primary btn-share-x' + (done ? ' done' : '') + '" id="btnEarnShare" data-task="' + share.id + '" target="_blank" rel="noopener" href="#">Share on X <em>+' + share.pts + '</em></a>');
+      '<a class="btn-primary btn-share-x' + (done ? ' done' : '') + '" id="btnEarnShare" data-task="' + share.id + '" target="_blank" rel="noopener" href="#">' + taskActionLabel(share, done, taps[share.id]) + '</a>');
   }
   if (koko) {
     const done = Boolean(claims[koko.id]);
     html += oneCard('FOLLOW', 'Follow KokoApe on X',
-      '<a class="btn-ghost' + (done ? ' done' : '') + '" data-task="' + koko.id + '" href="' + xIntent(koko) + '" target="_blank" rel="noopener">Follow <em>+' + koko.pts + '</em></a>');
+      '<a class="btn-ghost' + (done ? ' done' : '') + '" data-task="' + koko.id + '" href="' + xIntent(koko) + '" target="_blank" rel="noopener">' + taskActionLabel(koko, done, taps[koko.id]) + '</a>');
   }
   if (discord) {
     const done = Boolean(claims[discord.id]);
     html += oneCard('DISCORD', 'Join Insomnus Discord',
-      '<a class="btn-ghost' + (done ? ' done' : '') + '" data-task="' + discord.id + '" href="' + xIntent(discord) + '" target="_blank" rel="noopener">Join <em>+' + discord.pts + '</em></a>');
+      '<a class="btn-ghost' + (done ? ' done' : '') + '" data-task="' + discord.id + '" href="' + xIntent(discord) + '" target="_blank" rel="noopener">' + taskActionLabel(discord, done, taps[discord.id]) + '</a>');
   }
   SOCIAL_POSTS.forEach((p, i) => {
     const kids = allSocialTasks().filter((t) => t.post && t.post.id === p.id);
@@ -1298,14 +1446,14 @@ function renderTaskList() {
       const done = Boolean(claims[t.id]);
       const kind = t.type === 'comment' ? 'btn-primary' : 'btn-ghost';
       html += '<a class="' + kind + (done ? ' done' : '') + '" data-task="' + t.id + '" href="' + xIntent(t) + '" target="_blank" rel="noopener">' +
-        t.label + ' <em>+' + t.pts + '</em></a>';
+        taskActionLabel(t, done, taps[t.id]) + '</a>';
     });
     html += '</div></article>';
   });
   html += '<div class="task-note" id="taskNote"></div>';
   box.innerHTML = html;
   box.querySelectorAll('[data-task]').forEach((btn) => {
-    btn.addEventListener('click', () => onTaskTap(btn.getAttribute('data-task')));
+    btn.addEventListener('click', () => onTaskTap(btn.getAttribute('data-task'), btn));
   });
   bindXPopups(box);
   if (typeof refreshShares === 'function') refreshShares();
@@ -1313,11 +1461,11 @@ function renderTaskList() {
 
 ['btnShareX', 'btnShareAlreadyX'].forEach((id) => {
   const el = $(id);
-  if (el) el.addEventListener('click', () => onTaskTap('share-x'));
+  if (el) el.addEventListener('click', () => onTaskTap('share-x', el));
 });
 bindXPopups(document);
 
-async function onTaskTap(id) {
+async function onTaskTap(id, btn) {
   const task = allSocialTasks().find((t) => t.id === id);
   if (!task) return;
   if (loadTaskClaims()[id]) {
@@ -1326,14 +1474,38 @@ async function onTaskTap(id) {
       : 'Already sealed. Share is the loop.');
     return;
   }
-  const ok = await claimTask(id);
-  const keepNote = $('taskNote') ? $('taskNote').textContent : '';
-  renderTaskList();
-  if (ok) {
-    setTaskNote('+' + task.pts + ' sealed. Once only.');
-    if (typeof loadBoard === 'function') loadBoard();
-  } else if (keepNote) {
-    setTaskNote(keepNote);
+  if (taskChecking) {
+    setTaskNote('Still checking. Wait for the night to answer.');
+    return;
+  }
+  const next = bumpTap(id);
+  if (next.n === 1) {
+    const url = xIntent(task);
+    if (url && url !== '#') openXPopup(url);
+    if (typeof renderTaskList === 'function') renderTaskList();
+    setTaskNote('Do it on X. Come back and tap Verify.');
+    return;
+  }
+  const waited = Date.now() - (next.since || 0);
+  if (next.n === 2 && waited < 7000) {
+    setTaskNote('Not confirmed yet. Finish on X, then tap Verify again.');
+    if (btn) btn.innerHTML = 'Verify again <em>+' + task.pts + '</em>';
+    return;
+  }
+  taskChecking = true;
+  try {
+    await playCheckSequence(btn, task);
+    const ok = await claimTask(id);
+    const keepNote = $('taskNote') ? $('taskNote').textContent : '';
+    renderTaskList();
+    if (ok) {
+      setTaskNote('Confirmed. +' + task.pts + ' sealed. Once only.');
+      if (typeof loadBoard === 'function') loadBoard();
+    } else if (keepNote) {
+      setTaskNote(keepNote);
+    }
+  } finally {
+    taskChecking = false;
   }
 }
 

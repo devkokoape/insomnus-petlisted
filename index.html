@@ -30,7 +30,7 @@
   <link rel="preload" href="assets/fonts/alagard.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="preload" href="assets/gifs/DsGOb8.gif" as="image">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&family=Inter:wght@400;500;600&display=swap">
-  <link rel="stylesheet" href="styles.css?v=lock8">
+  <link rel="stylesheet" href="styles.css?v=lock9">
   <script>
     (function () {
       function canType(el) {
@@ -73,6 +73,8 @@
         <span>INSOMNUS</span>
       </a>
       <nav class="nav-links">
+        <a href="#whitelist" class="nav-item">Whitelist</a>
+        <a href="#earn" class="nav-item">Earn</a>
         <a href="#board" class="nav-item">Leaderboard</a>
         <a href="#dungeon" class="nav-item">The dungeon</a>
         <a href="#faq" class="nav-item">Inscriptions</a>
@@ -257,25 +259,39 @@
       </div>
     </section>
 
-    <section id="board" class="board-sheet">
+    <section id="whitelist" class="wl-sheet">
       <div class="wrap">
-        <div class="kicker">THE RANKING</div>
-        <h2 class="manifesto-title">Leaderboard</h2>
-        <p class="board-lead">Rank is score, then who sealed first. Referrals use X handles.</p>
-
-        <div class="dungeon-frame board-table-wrap">
-          <div class="board-you" id="boardYou">Connect Google to take a rank.</div>
-          <div class="board-head">
-            <span>Rank</span>
-            <span>Handle</span>
-            <span>Referrals</span>
-            <span>Score</span>
-          </div>
-          <div id="boardRows" class="board-rows"></div>
-          <div class="board-pager">
-            <button type="button" id="boardPrev" class="btn-ghost">Prev</button>
-            <span id="boardPageLabel">1 / 1</span>
-            <button type="button" id="boardNext" class="btn-ghost">Next</button>
+        <div class="wl-box">
+          <div class="wl-bg"></div>
+          <div class="wl-veil"></div>
+          <div class="wl-inner">
+            <h3>Are you on the list?</h3>
+            <div class="wl-mint">
+              <div class="wl-mint-when" id="wlMintWhen"></div>
+              <div class="wl-mint-count" id="wlMintCount"></div>
+              <a class="bind-btn wl-mint-go" href="https://mint.insomnus.xyz" target="_blank" rel="noopener">Open the mint hall</a>
+            </div>
+            <div class="wl-stage">
+              <div class="wl-row">
+                <input id="wl-input" type="text" spellcheck="false" autocomplete="off" placeholder="0x…">
+                <span id="wl-inline" class="wl-inline"></span>
+                <button type="button" id="wl-check" class="bind-btn">CHECK</button>
+              </div>
+            </div>
+            <div class="wl-counts">
+              <div class="wl-count wl-gate" data-gate="ancient">
+                <h4>Ancient One</h4>
+              </div>
+              <div class="wl-count wl-gate" data-gate="freegtd">
+                <h4>GTD free</h4>
+              </div>
+              <div class="wl-count wl-gate" data-gate="gtd">
+                <h4>Guaranteed</h4>
+              </div>
+              <div class="wl-count wl-gate" data-gate="petlist">
+                <h4>Petlist</h4>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -298,6 +314,30 @@
           <span class="hot"><b>+80</b> Referral</span>
         </div>
         <div id="taskList" class="task-list"></div>
+      </div>
+    </section>
+
+    <section id="board" class="board-sheet">
+      <div class="wrap">
+        <div class="kicker">THE RANKING</div>
+        <h2 class="manifesto-title">Leaderboard</h2>
+        <p class="board-lead">Rank is score, then who sealed first. Referrals use X handles.</p>
+
+        <div class="dungeon-frame board-table-wrap">
+          <div class="board-you" id="boardYou">Connect Google to take a rank.</div>
+          <div class="board-head">
+            <span>Rank</span>
+            <span>Handle</span>
+            <span>Referrals</span>
+            <span>Score</span>
+          </div>
+          <div id="boardRows" class="board-rows"></div>
+          <div class="board-pager">
+            <button type="button" id="boardPrev" class="btn-ghost">Prev</button>
+            <span id="boardPageLabel">1 / 1</span>
+            <button type="button" id="boardNext" class="btn-ghost">Next</button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -422,6 +462,6 @@
 
   <canvas id="confetti" aria-hidden="true"></canvas>
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script defer src="app.js?v=lock8"></script>
+  <script defer src="app.js?v=lock9"></script>
 </body>
 </html>

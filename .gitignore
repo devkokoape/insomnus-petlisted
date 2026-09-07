@@ -6,3 +6,4 @@ desktop.ini
 .vscode/
 secrets.*
 tools/script-properties.txt
+tools/*.csv
