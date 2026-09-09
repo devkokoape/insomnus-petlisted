@@ -1,5 +1,18 @@
-"""Import address,tier CSV into public.whitelist. Uses the secret key. Do not commit CSVs."""
+"""Sync address,phase CSV into public.whitelist.
+
+Highest tier wins on duplicate wallets:
+  ancient > freegtd > gtd > petlist
+
+Usage:
+  python tools/import-whitelist.py
+      uses WHITELIST_CSV_URL from tools/script-properties.txt
+  python tools/import-whitelist.py C:\\Users\\Micheal\\Downloads\\sheet.csv
+      uses that file
+
+Do not commit CSVs or the properties file.
+"""
 import csv
+import io
 import json
 import os
 import re
@@ -10,11 +23,13 @@ import urllib.request
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROPS = os.path.join(ROOT, "tools", "script-properties.txt")
 WALLET_RE = re.compile(r"^0x[a-fA-F0-9]{40}$")
-PHASES = ("ancient", "freegtd", "gtd", "petlist")
+RANK = {"ancient": 4, "freegtd": 3, "gtd": 2, "petlist": 1}
 
 
 def load_props():
     out = {}
+    if not os.path.isfile(PROPS):
+        return out
     with open(PROPS, encoding="utf-8") as f:
         for line in f:
             if "=" not in line:
@@ -34,10 +49,10 @@ def phase_from(raw):
         return "ancient"
     if "free" in s or s in ("freegtd", "gtd free", "02"):
         return "freegtd"
-    if "pet" in s or "list" in s or s == "04":
-        return "petlist"
     if "gtd" in s or "guaranteed" in s or s == "03":
         return "gtd"
+    if "pet" in s or "list" in s or s == "04":
+        return "petlist"
     return ""
 
 
@@ -54,32 +69,30 @@ def rest(method, path, query="", body=None):
     data = json.dumps(body).encode() if body is not None else None
     req = urllib.request.Request(url, data=data, method=method, headers=headers)
     try:
-        with urllib.request.urlopen(req, timeout=60) as res:
+        with urllib.request.urlopen(req, timeout=90) as res:
             raw = res.read().decode() or "[]"
             return res.status, json.loads(raw) if raw.startswith("[") or raw.startswith("{") else raw
     except urllib.error.HTTPError as e:
         return e.code, e.read().decode()[:500]
 
 
-def read_rows(path):
-    with open(path, encoding="utf-8-sig", newline="") as f:
-        sample = f.read(4096)
-        f.seek(0)
-        try:
-            dialect = csv.Sniffer().sniff(sample, delimiters=",;\t")
-        except csv.Error:
-            dialect = csv.excel
-        reader = csv.reader(f, dialect)
-        rows = [r for r in reader if any(c.strip() for c in r)]
+def parse_csv_text(text):
+    f = io.StringIO(text)
+    sample = text[:4096]
+    try:
+        dialect = csv.Sniffer().sniff(sample, delimiters=",;\t")
+    except csv.Error:
+        dialect = csv.excel
+    rows = [r for r in csv.reader(f, dialect) if any(c.strip() for c in r)]
     if not rows:
-        return []
+        return [], 0
     head = [c.strip().lower() for c in rows[0]]
     ai = next((i for i, h in enumerate(head) if "address" in h or "wallet" in h or h == "0x"), 0)
     pi = next((i for i, h in enumerate(head) if "phase" in h or "tier" in h or "round" in h or "list" in h), 1)
     start = 1 if any(x in " ".join(head) for x in ("address", "wallet", "phase", "tier", "list")) else 0
-    out = []
-    seen = set()
+    best = {}
     skip = 0
+    dups = 0
     for r in rows[start:]:
         if max(ai, pi) >= len(r):
             skip += 1
@@ -89,24 +102,41 @@ def read_rows(path):
         if not WALLET_RE.match(addr) or not phase:
             skip += 1
             continue
-        if addr in seen:
-            continue
-        seen.add(addr)
-        out.append({"address": addr, "phase": phase})
-    return out, skip
+        if addr in best:
+            dups += 1
+            if RANK[phase] > RANK[best[addr]]:
+                best[addr] = phase
+        else:
+            best[addr] = phase
+    out = [{"address": a, "phase": p} for a, p in best.items()]
+    return out, skip, dups
+
+
+def load_source(arg):
+    if arg:
+        if arg.startswith("http://") or arg.startswith("https://"):
+            req = urllib.request.Request(arg, headers={"User-Agent": "Mozilla/5.0"})
+            with urllib.request.urlopen(req, timeout=60) as res:
+                return res.read().decode("utf-8-sig")
+        if os.path.isfile(arg):
+            with open(arg, encoding="utf-8-sig") as f:
+                return f.read()
+        raise SystemExit("Not a file or URL: " + arg)
+    url = load_props().get("WHITELIST_CSV_URL") or ""
+    if not url:
+        raise SystemExit(
+            "Pass a CSV path, or set WHITELIST_CSV_URL in tools/script-properties.txt"
+        )
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    with urllib.request.urlopen(req, timeout=60) as res:
+        return res.read().decode("utf-8-sig")
 
 
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: python tools/import-whitelist.py path\\to\\wallets.csv")
-        print("CSV columns: address, tier   (tier = ancient | freegtd | gtd | petlist)")
-        return 1
-    path = sys.argv[1]
-    if not os.path.isfile(path):
-        print("File not found:", path)
-        return 1
-    rows, skipped = read_rows(path)
-    print("valid rows", len(rows), "skipped", skipped)
+    arg = sys.argv[1] if len(sys.argv) > 1 else ""
+    text = load_source(arg)
+    rows, skipped, dups = parse_csv_text(text)
+    print("unique wallets", len(rows), "duplicate extra rows", dups, "skipped", skipped)
     if not rows:
         return 1
     ok = 0
