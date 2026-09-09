@@ -15,7 +15,7 @@ const SOCIAL_POSTS = [
   { id: 't2', url: 'https://x.com/insomnusxyz/status/2088255514048438439' },
   { id: 't3', url: 'https://x.com/insomnusxyz/status/2052616450284863879' },
   { id: 't7', url: 'https://x.com/insomnusxyz/status/2097594382077812913' },
-  { id: 't5', url: 'https://x.com/KokoApe_/status/2039587520753832060' }
+  { id: 't8', url: 'https://x.com/insomnusxyz/status/2097667337709306136' }
 ];
 const TASK_PTS = { follow: 100, discord: 100, like: 5, retweet: 10, quote: 15, share: 50 };
 const SB_URL = 'https://murnfprvourhkmieuref.supabase.co';
