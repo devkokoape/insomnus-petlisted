@@ -170,6 +170,7 @@ def xauth(body):
         "handle": handle.lower(),
         "name": gname,
         "pfp": str(me.get("picture") or ""),
+        "email": email,
     }
     code_sb, saved = sb_request(
         "POST",

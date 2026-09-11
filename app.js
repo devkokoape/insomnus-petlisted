@@ -289,6 +289,7 @@ async function upsertUserFromSession(session) {
     handle: handle.toLowerCase(),
     name: name,
     pfp: pfp,
+    email: email,
     last_login: new Date().toISOString()
   });
 }
