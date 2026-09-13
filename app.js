@@ -2,6 +2,7 @@
  * Paste your Apps Script web app URL after deploying tools/petlist-apply.gs */
 const APPLY_SCRIPT = 'https://script.google.com/macros/s/AKfycbz9ZOXVQFkEOAVIAxgDfO1ok3QCjIeWHtAuVIStLUquYoGccst_Zs9XZirk6IUZAgNB/exec';
 const PINNED = 'https://x.com/insomnusxyz/status/2095882002646135247';
+const MINT_ARTICLE = 'https://x.com/insomnusxyz/status/2099165194681458697';
 const X_ACCOUNT = 'insomnusxyz';
 const X_KOKO = 'KokoApe_';
 const DISCORD_URL = 'https://discord.gg/BCThPrJUtN';
@@ -565,7 +566,7 @@ function resetSlipForm() {
   ['f-x', 'f-quote', 'f-wallet'].forEach((id) => {
     if ($(id) && id !== 'f-wallet') { /* keep wallet optional */ }
   });
-  $('btnSubmitSlip').disabled = false;
+  if ($('btnSubmitSlip')) $('btnSubmitSlip').disabled = false;
   if ($('disabledNote')) $('disabledNote').textContent = 'one wallet · one slot';
 }
 
@@ -1300,6 +1301,20 @@ function openXPopup(url) {
   window.open(url, '_blank', 'noopener,noreferrer');
   return true;
 }
+
+function openMintArticle(e) {
+  if (e) e.preventDefault();
+  window.open(
+    MINT_ARTICLE,
+    'insomnus-mint-article',
+    'noopener,noreferrer,width=780,height=920,scrollbars=yes,resizable=yes'
+  );
+  return false;
+}
+
+document.querySelectorAll('.js-mint-article').forEach((el) => {
+  el.addEventListener('click', openMintArticle);
+});
 
 function bindXPopups(root) {
   (root || document).querySelectorAll('a.js-x-popup, a[data-task]').forEach((el) => {

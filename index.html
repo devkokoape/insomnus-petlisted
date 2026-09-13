@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Insomnus Petlist</title>
-  <meta name="description" content="Insomnus is a Robinhood web3 game. Spawn your pet, survive the horde, loot the run. Apply now.">
+  <meta name="description" content="Insomnus is a Robinhood web3 game. Spawn your pet, survive the horde, loot the run. Read the pet mint article.">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Insomnus">
   <meta property="og:title" content="Insomnus - Web 3.0 Dungeon">
@@ -30,7 +30,7 @@
   <link rel="preload" href="assets/fonts/alagard.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="preload" href="assets/gifs/DsGOb8.gif" as="image">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&family=Inter:wght@400;500;600&display=swap">
-  <link rel="stylesheet" href="styles.css?v=lock15">
+  <link rel="stylesheet" href="styles.css?v=lock16">
   <script>
     (function () {
       function canType(el) {
@@ -74,8 +74,8 @@
       </a>
       <nav class="nav-links">
         <a href="#whitelist" class="nav-item">Whitelist</a>
-        <a href="#earn" class="nav-item">Earn</a>
         <a href="#board" class="nav-item">Leaderboard</a>
+        <a href="https://x.com/insomnusxyz/status/2099165194681458697" class="nav-item js-mint-article" target="_blank" rel="noopener">Pet mint</a>
         <a href="#dungeon" class="nav-item">The dungeon</a>
         <a href="#faq" class="nav-item">Inscriptions</a>
       </nav>
@@ -107,7 +107,7 @@
               The sleepless already crawl the night. Spawn your pet, survive the horde, loot the run.
             </p>
             <div class="hero-actions">
-              <a href="#slipPaper" class="btn-primary">Apply now</a>
+              <a href="https://x.com/insomnusxyz/status/2099165194681458697" class="btn-primary js-mint-article" target="_blank" rel="noopener">Read pet mint info</a>
               <a href="#board" class="btn-ghost">Leaderboard</a>
             </div>
             <div class="trust-strip">
@@ -118,142 +118,22 @@
           </div>
 
           <div class="hero-form">
-            <div class="slip-paper dungeon-frame locked" id="slipPaper">
-              <div class="auth-gate" id="authGate">
-                <div class="auth-gate-inner">
-                  <div class="slip-kicker">GOOGLE LOGIN</div>
-                  <h3>Connect Google to apply</h3>
-                  <p>Sign in with Google so we can track your rank and referrals. Then add your X handle on the slip. Google login is free.</p>
-                  <button type="button" class="btn-primary btn-seal" id="btnGateX">Connect Google</button>
-                  <span class="disabled-note" id="authGateNote">Sign in with Google. Then seal the slip.</span>
-                </div>
+            <article class="slip-paper dungeon-frame mint-card">
+              <div class="slip-top">
+                <div class="slip-kicker">PET MINT</div>
+                <h2 class="slip-title">Read about the pet mint</h2>
+                <p class="slip-intro">Mint structure, pricing, supply, and the breeding economy. Opens the full article in a new window.</p>
               </div>
-              <div id="slipFormView">
-                <div class="slip-top">
-                  <div class="slip-kicker">PETLIST</div>
-                  <h2 class="slip-title">Petlisted application</h2>
-                  <p class="slip-intro">X handle. Post. Wallet. Then seal it.</p>
-                </div>
-
-                <div class="field-stack">
-                  <div class="field-group">
-                    <div class="field-label">
-                      <label for="f-x">X handle</label>
-                      <a class="btn-pinned js-x-popup" href="https://x.com/intent/follow?screen_name=insomnusxyz">Follow ↗</a>
-                    </div>
-                    <div id="wrap-x" class="input-box">
-                      <span class="prefix">@</span>
-                      <input id="f-x" type="text" spellcheck="false" autocomplete="off" placeholder="yourname" maxlength="15">
-                    </div>
-                    <div id="err-x" class="err">Enter your REAL X handle.</div>
-                  </div>
-
-                  <div class="field-group">
-                    <div class="field-label">
-                      <label for="f-quote">Quote / Reply link</label>
-                      <span class="field-jumps">
-                        <a class="btn-pinned" href="https://x.com/insomnusxyz/status/2095882002646135247" target="_blank" rel="noopener">Pinned post ↗</a>
-                        <a class="btn-pinned js-x-popup" href="https://x.com/intent/like?tweet_id=2095882002646135247">Like ↗</a>
-                        <a class="btn-pinned js-x-popup" href="https://x.com/intent/retweet?tweet_id=2095882002646135247">Repost ↗</a>
-                        <a class="btn-pinned js-x-popup" href="https://x.com/intent/tweet?in_reply_to=2095882002646135247">Comment ↗</a>
-                      </span>
-                    </div>
-                    <div id="wrap-quote" class="input-box">
-                      <input id="f-quote" type="url" spellcheck="false" autocomplete="off" placeholder="https://x.com/yourname/status/…">
-                    </div>
-                    <div id="err-quote" class="err">Paste the link to your quote or reply on X.</div>
-                  </div>
-
-                  <div class="field-group">
-                    <label for="f-wallet" class="field-label">Wallet address</label>
-                    <div id="wrap-wallet" class="input-box">
-                      <input id="f-wallet" class="mono" type="text" spellcheck="false" autocomplete="off" placeholder="0x…">
-                    </div>
-                    <div id="err-wallet" class="err">
-                      We need a wallet address to hold your spot.
-                      <span class="note">check this one again</span>
-                    </div>
-                  </div>
-
-                  <div class="field-group">
-                    <label for="f-ref" class="field-label">Referred by <span class="opt">optional</span></label>
-                    <div id="wrap-ref" class="input-box">
-                      <span class="prefix">@</span>
-                      <input id="f-ref" type="text" spellcheck="false" autocomplete="off" placeholder="theirxname" maxlength="15">
-                    </div>
-                    <div id="err-ref" class="err">Use their X handle. You can't refer yourself.</div>
-                    <div id="refHint" class="field-hint"></div>
-                  </div>
-                </div>
-
-                <div class="checks">
-                  <div id="agreeCheckbox1" class="check" role="checkbox" aria-checked="false" tabindex="0">
-                    <div class="box"><div id="agreeTick1" class="tick"></div></div>
-                    <div class="txt">I followed <strong>@insomnusxyz</strong> on X.</div>
-                    <a class="btn-pinned js-x-popup" href="https://x.com/intent/follow?screen_name=insomnusxyz">Follow ↗</a>
-                  </div>
-                  <div id="agreeCheckbox2" class="check" role="checkbox" aria-checked="false" tabindex="0">
-                    <div class="box"><div id="agreeTick2" class="tick"></div></div>
-                    <div class="txt">I RT and Liked the <strong>pinned post</strong>.</div>
-                    <span class="field-jumps">
-                      <a class="btn-pinned js-x-popup" href="https://x.com/intent/like?tweet_id=2095882002646135247">Like ↗</a>
-                      <a class="btn-pinned js-x-popup" href="https://x.com/intent/retweet?tweet_id=2095882002646135247">Repost ↗</a>
-                      <a class="btn-pinned js-x-popup" href="https://x.com/intent/tweet?in_reply_to=2095882002646135247">Comment ↗</a>
-                    </span>
-                  </div>
-                </div>
-                <div id="err-agree" class="err">Tick both boxes so we can check you off.</div>
-
-                <div class="submit-row">
-                  <button type="button" id="btnSubmitSlip" class="btn-primary btn-seal">Seal it</button>
-                  <span id="disabledNote" class="disabled-note">one wallet · one slot</span>
-                </div>
+              <ul class="mint-points">
+                <li>Gen 1 pets are the foundation — Heal Bot, Slime Gloop, Demon Dog. 3,000 each.</li>
+                <li>Mint opens 14:00 UTC at mint.insomnus.xyz.</li>
+                <li>Gen 2 and Gen 3 are bred, not minted. Keys and Essence keep the pack scarce.</li>
+              </ul>
+              <div class="hero-actions mint-actions">
+                <a href="https://x.com/insomnusxyz/status/2099165194681458697" class="btn-primary btn-seal js-mint-article" target="_blank" rel="noopener">Read the article ↗</a>
+                <a href="https://mint.insomnus.xyz" class="btn-ghost btn-seal" target="_blank" rel="noopener">Open the mint hall</a>
               </div>
-
-              <div id="slipSuccessView" class="state-panel">
-                <div class="stamp">SEALED — you're on the list</div>
-                <div class="queue" id="queueNumber">Application received</div>
-                <p>You're on the list. Share your link (+80 each referral) or earn more points on the tasks below.</p>
-                <div class="ref-box">
-                  <label class="field-label" for="refLink">Your link</label>
-                  <div class="input-box ref-copy-row">
-                    <input id="refLink" type="text" readonly>
-                    <button type="button" id="btnCopyRef" class="btn-copy">Copy</button>
-                  </div>
-                </div>
-                <div class="share-preview" id="sharePreview"></div>
-                <a id="btnShareX" class="btn-primary btn-seal btn-share-x" data-task="share-x" target="_blank" rel="noopener" href="#">Share on X · +50</a>
-                <a href="#earn" class="btn-ghost btn-seal">Earn more points</a>
-              </div>
-
-              <div id="slipFullView" class="state-panel">
-                <div class="stamp">the list is full</div>
-                <p>The list is currently full. The waiting list is real: we call names in order when spots free up at the end of the window.</p>
-                <button type="button" class="btn-primary" data-reset>Put me on the waiting list</button>
-              </div>
-
-              <div id="slipAlreadyView" class="state-panel">
-                <div class="stamp gold">seen</div>
-                <p>This wallet already sealed a slip. You can still climb — do the tasks and share your link.</p>
-                <div class="meta-line" id="alreadyMeta">0x… · @handle</div>
-                <div class="ref-box">
-                  <label class="field-label" for="alreadyRefLink">Your link</label>
-                  <div class="input-box ref-copy-row">
-                    <input id="alreadyRefLink" type="text" readonly>
-                    <button type="button" id="btnCopyAlreadyRef" class="btn-copy">Copy</button>
-                  </div>
-                </div>
-                <a id="btnShareAlreadyX" class="btn-primary btn-seal btn-share-x" data-task="share-x" target="_blank" rel="noopener" href="#">Share on X · +50</a>
-                <a href="#earn" class="btn-ghost btn-seal">Earn more points</a>
-                <button type="button" class="btn-ghost" data-reset>change wallet</button>
-              </div>
-
-              <div id="slipNetworkView" class="state-panel">
-                <div class="stamp">it didn't reach us</div>
-                <p>Your slip didn't go through. Nothing was saved and nothing was charged.</p>
-                <button type="button" class="btn-primary" data-reset>Seal it again</button>
-              </div>
-            </div>
+            </article>
           </div>
         </div>
       </div>
@@ -294,26 +174,6 @@
             </div>
           </div>
         </div>
-      </div>
-    </section>
-
-    <section id="earn" class="earn-sheet">
-      <div class="wrap">
-        <div class="kicker">MORE SCORE</div>
-        <h2 class="manifesto-title">Earn more points</h2>
-        <p class="board-lead earn-lead">Tap a card. It jumps to X. Each task pays once — referral is the loop.</p>
-        <div class="score-legend" id="scoreGrid">
-          <span class="hot"><b>+100</b> Follow Insomnus</span>
-          <span class="hot"><b>+100</b> Follow KokoApe</span>
-          <span class="hot"><b>+100</b> Discord</span>
-          <span><b>+5</b> Like</span>
-          <span><b>+10</b> Repost</span>
-          <span><b>+15</b> Comment</span>
-          <span><b>+50</b> Seal</span>
-          <span class="hot"><b>+50</b> Share on X</span>
-          <span class="hot"><b>+80</b> Referral</span>
-        </div>
-        <div id="taskList" class="task-list"></div>
       </div>
     </section>
 
@@ -415,11 +275,11 @@
           </details>
           <details class="dungeon-frame faq-item">
             <summary>What is this list? <span class="plus">+</span></summary>
-            <div class="faq-body">A chance to mint a Gen 1 pet before public. Applying is free. It does not guarantee a mint. Seal the slip, then earn points.</div>
+            <div class="faq-body">The checker for Gen 1 mint phases. Paste a wallet. Gold on the board is free mint. Blood is petlisted. Read the <a href="https://x.com/insomnusxyz/status/2099165194681458697" class="js-mint-article" target="_blank" rel="noopener">pet mint article</a> for structure, pricing, and supply.</div>
           </details>
           <details class="dungeon-frame faq-item">
-            <summary>How do I climb the board? <span class="plus">+</span></summary>
-            <div class="faq-body">Follow, Discord, like, repost, comment, and share on X each pay once. Your referral link is +80 every time someone seals through it.</div>
+            <summary>Where is the mint article? <span class="plus">+</span></summary>
+            <div class="faq-body">On X. <a href="https://x.com/insomnusxyz/status/2099165194681458697" class="js-mint-article" target="_blank" rel="noopener">Read about the pet mint</a> — it opens in a new window. Mint hall: <a href="https://mint.insomnus.xyz" target="_blank" rel="noopener">mint.insomnus.xyz</a>.</div>
           </details>
         </div>
       </div>
@@ -467,7 +327,7 @@
 
   <canvas id="confetti" aria-hidden="true"></canvas>
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script defer src="awards.js?v=lock15"></script>
-  <script defer src="app.js?v=lock15"></script>
+  <script defer src="awards.js?v=lock16"></script>
+  <script defer src="app.js?v=lock16"></script>
 </body>
 </html>

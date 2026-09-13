@@ -358,6 +358,32 @@ section[id] { scroll-margin-top: calc(var(--header) + 18px); }
 }
 .hero-copy { padding-top: 0; }
 .hero-form { min-width: 0; }
+.mint-card .slip-intro { max-width: 34em; }
+.mint-points {
+  list-style: none;
+  margin: 0 0 22px;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.mint-points li {
+  position: relative;
+  padding: 0 0 0 18px;
+  color: var(--text);
+  font-size: 0.98rem;
+  line-height: 1.45;
+}
+.mint-points li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 7px;
+  height: 7px;
+  background: var(--gold);
+  box-shadow: 0 0 0 1px #000;
+}
+.mint-actions { margin-bottom: 0; }
 
 .hero-tag {
   font-family: 'VT323', monospace;
