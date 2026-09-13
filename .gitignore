@@ -8,3 +8,4 @@ secrets.*
 tools/script-properties.txt
 tools/*.csv
 tools/pick-event-winners.py
+tools/export-emails.py

@@ -906,10 +906,10 @@ function mergeLocal(rows) {
   return rankRows(list);
 }
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 20;
 let boardAll = [];
 let boardPage = 0;
-let boardFilter = 'all';
+let boardFilter = 'winners';
 
 function awardOf(handle) {
   const map = window.BOARD_AWARDS || {};
@@ -919,7 +919,7 @@ function awardOf(handle) {
 function filteredBoard() {
   if (boardFilter === 'free') return boardAll.filter((r) => awardOf(r.handle) === 'free');
   if (boardFilter === 'petlist') return boardAll.filter((r) => awardOf(r.handle) === 'petlist');
-  return boardAll;
+  return boardAll.filter((r) => awardOf(r.handle));
 }
 
 function youHandle() {
@@ -961,7 +961,7 @@ function renderBoardPage() {
   if (boardPage < 0) boardPage = 0;
   const slice = rows.slice(boardPage * PAGE_SIZE, boardPage * PAGE_SIZE + PAGE_SIZE);
   if (!rows.length) {
-    box.innerHTML = '<div class="board-empty">No sealed slips yet. Be first.</div>';
+    box.innerHTML = '<div class="board-empty">No winners in this list.</div>';
   } else {
     box.innerHTML = slice.map((r) => {
       const award = awardOf(r.handle);
@@ -1072,7 +1072,7 @@ if ($('boardFilters')) {
   $('boardFilters').addEventListener('click', (e) => {
     const btn = e.target.closest('[data-board-filter]');
     if (!btn) return;
-    boardFilter = btn.getAttribute('data-board-filter') || 'all';
+    boardFilter = btn.getAttribute('data-board-filter') || 'winners';
     boardPage = 0;
     $('boardFilters').querySelectorAll('[data-board-filter]').forEach((el) => {
       el.classList.toggle('on', el === btn);
