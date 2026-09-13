@@ -567,9 +567,10 @@ section[id] { scroll-margin-top: calc(var(--header) + 18px); }
   font-family: 'VT323', monospace;
   color: var(--white);
   font-size: 1.2rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
 }
 .board-row .sc {
   font-family: 'VT323', monospace;
@@ -583,6 +584,58 @@ section[id] { scroll-margin-top: calc(var(--header) + 18px); }
   box-shadow: inset 2px 0 0 var(--accent);
 }
 .board-row.top1 .rk { color: var(--accent); }
+.board-row.award-free {
+  background: rgba(197, 164, 109, 0.16);
+  box-shadow: inset 3px 0 0 var(--gold);
+}
+.board-row.award-petlist {
+  background: rgba(192, 38, 39, 0.1);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.board-row.award-free.you,
+.board-row.award-petlist.you {
+  box-shadow: inset 3px 0 0 var(--gold), inset -3px 0 0 var(--accent);
+}
+.board-row .nm {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.board-row .mark {
+  flex: 0 0 auto;
+  font-family: 'VT323', monospace;
+  font-style: normal;
+  font-size: 0.78rem;
+  letter-spacing: 1px;
+  padding: 1px 7px 0;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+}
+.board-row.award-petlist .mark {
+  border-color: var(--accent);
+  color: var(--accent-hot);
+}
+.board-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 16px;
+}
+.board-filters button {
+  font-family: 'VT323', monospace;
+  letter-spacing: 1px;
+  font-size: 1rem;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--line);
+  padding: 6px 12px 5px;
+  cursor: pointer;
+}
+.board-filters button.on {
+  color: var(--gold-lit);
+  border-color: var(--gold);
+  background: rgba(197, 164, 109, 0.12);
+}
 .board-empty {
   padding: 28px 18px;
   text-align: center;

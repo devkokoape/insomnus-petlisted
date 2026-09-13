@@ -908,6 +908,18 @@ function mergeLocal(rows) {
 const PAGE_SIZE = 10;
 let boardAll = [];
 let boardPage = 0;
+let boardFilter = 'all';
+
+function awardOf(handle) {
+  const map = window.BOARD_AWARDS || {};
+  return map[String(handle || '').toLowerCase()] || '';
+}
+
+function filteredBoard() {
+  if (boardFilter === 'free') return boardAll.filter((r) => awardOf(r.handle) === 'free');
+  if (boardFilter === 'petlist') return boardAll.filter((r) => awardOf(r.handle) === 'petlist');
+  return boardAll;
+}
 
 function youHandle() {
   const saved = loadSaved();
@@ -942,20 +954,27 @@ function renderBoardPage() {
   const box = $('boardRows');
   if (!box) return;
   const you = youHandle();
-  const pages = Math.max(1, Math.ceil(boardAll.length / PAGE_SIZE));
+  const rows = filteredBoard();
+  const pages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
   if (boardPage > pages - 1) boardPage = pages - 1;
   if (boardPage < 0) boardPage = 0;
-  const slice = boardAll.slice(boardPage * PAGE_SIZE, boardPage * PAGE_SIZE + PAGE_SIZE);
-  if (!boardAll.length) {
+  const slice = rows.slice(boardPage * PAGE_SIZE, boardPage * PAGE_SIZE + PAGE_SIZE);
+  if (!rows.length) {
     box.innerHTML = '<div class="board-empty">No sealed slips yet. Be first.</div>';
   } else {
     box.innerHTML = slice.map((r) => {
+      const award = awardOf(r.handle);
       const cls = ['board-row'];
       if (r.rank === 1) cls.push('top1');
       if (you && r.handle === you) cls.push('you');
+      if (award === 'free') cls.push('award-free');
+      if (award === 'petlist') cls.push('award-petlist');
+      const mark = award === 'free'
+        ? '<em class="mark">FREE</em>'
+        : (award === 'petlist' ? '<em class="mark">PETLIST</em>' : '');
       return '<div class="' + cls.join(' ') + '">' +
         '<span class="rk">#' + r.rank + '</span>' +
-        '<span class="who">@' + r.handle + '</span>' +
+        '<span class="who"><span class="nm">@' + r.handle + '</span>' + mark + '</span>' +
         '<span class="rf">' + r.refs + '</span>' +
         '<span class="sc">' + r.score + '</span>' +
         '</div>';
@@ -973,7 +992,7 @@ function renderBoardPage() {
 function jumpToYou() {
   const h = youHandle();
   if (!h) return;
-  const i = boardAll.findIndex((r) => r.handle === h);
+  const i = filteredBoard().findIndex((r) => r.handle === h);
   if (i < 0) return;
   boardPage = Math.floor(i / PAGE_SIZE);
 }
@@ -1048,6 +1067,18 @@ async function loadBoard() {
 
 if ($('boardPrev')) $('boardPrev').addEventListener('click', () => { boardPage -= 1; renderBoardPage(); });
 if ($('boardNext')) $('boardNext').addEventListener('click', () => { boardPage += 1; renderBoardPage(); });
+if ($('boardFilters')) {
+  $('boardFilters').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-board-filter]');
+    if (!btn) return;
+    boardFilter = btn.getAttribute('data-board-filter') || 'all';
+    boardPage = 0;
+    $('boardFilters').querySelectorAll('[data-board-filter]').forEach((el) => {
+      el.classList.toggle('on', el === btn);
+    });
+    renderBoardPage();
+  });
+}
 if ($('f-x')) $('f-x').addEventListener('input', () => { renderBoardPage(); refreshShares(); });
 
 const WL_PHASES = {
