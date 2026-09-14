@@ -19,8 +19,8 @@ const SOCIAL_POSTS = [
   { id: 't8', url: 'https://x.com/insomnusxyz/status/2097667337709306136' }
 ];
 const TASK_PTS = { follow: 100, discord: 100, like: 5, retweet: 10, quote: 15, share: 50 };
-const SB_URL = 'https://murnfprvourhkmieuref.supabase.co';
-const SB_KEY = 'sb_publishable_EL3A6f2X9DlNgZap4MxCHQ_tLl4Axfc';
+const SB_URL = 'https://irgnqzcqyvvsnuskhjks.supabase.co';
+const SB_KEY = 'sb_publishable_Pv1HcD_PiRn_VOwH50Osmw_3onb9bjK';
 let sb = null;
 
 function isLocalHost() {

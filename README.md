@@ -33,7 +33,7 @@ Sheet tab `Users` (X logins): `time | xid | handle | name | pfp`
 
 Data is stored in Supabase, not the Google Sheet.
 
-1. Open [SQL editor](https://supabase.com/dashboard/project/murnfprvourhkmieuref/sql/new)
+1. Open [SQL editor](https://supabase.com/dashboard/project/irgnqzcqyvvsnuskhjks/sql/new)
 2. Paste and run `schema.sql`
 3. Keep `SUPABASE_SECRET_KEY` only in `tools/script-properties.txt` (gitignored) and `server.py`
 
