@@ -97,7 +97,7 @@ def parse_csv_text(text):
         if max(ai, pi) >= len(r):
             skip += 1
             continue
-        addr = re.sub(r"\s+", "", r[ai]).lower()
+        addr = re.sub(r"[\s\u200b-\u200f\u202a-\u202e\ufeff]+", "", r[ai]).lower()
         phase = phase_from(r[pi])
         if not WALLET_RE.match(addr) or not phase:
             skip += 1
